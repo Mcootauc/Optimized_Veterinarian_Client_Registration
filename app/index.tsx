@@ -1,100 +1,60 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
     View,
     TextInput,
-    Button,
     Alert,
     StyleSheet,
     ScrollView,
     Text,
     TouchableOpacity,
-} from "react-native";
-import { submitFormData } from "../components/GoogleSheetsService";
+} from 'react-native';
+import AppLoading from 'expo-app-loading';
+import {
+    useFonts,
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
+import { submitFormData } from '../components/GoogleSheetsService';
 
 export default function Index() {
-    const [ownerName, setOwnerName] = useState("");
-    const [homeAddress, setHomeAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [state, setState] = useState("");
-    const [zipCode, setZipCode] = useState("");
-    const [cellPhone, setCellPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [petName, setPetName] = useState("");
-    const [species, setSpecies] = useState("");
-    const [breed, setBreed] = useState("");
-    const [age, setAge] = useState("");
-    const [sex, setSex] = useState("");
-    const [spayedOrNeutered, setSpayedOrNeutered] = useState("");
-    const [color, setColor] = useState("");
-    const [microchip, setMicrochip] = useState("");
-    const [initials, setInitials] = useState("");
+    // Form fields
+    const [ownerName, setOwnerName] = useState('');
+    const [homeAddress, setHomeAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [cellPhone, setCellPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [petName, setPetName] = useState('');
+    const [species, setSpecies] = useState('');
+    const [breed, setBreed] = useState('');
+    const [age, setAge] = useState('');
+    const [color, setColor] = useState('');
+    const [sex, setSex] = useState('');
+    const [spayedOrNeutered, setSpayedOrNeutered] = useState('');
+    const [microchip, setMicrochip] = useState('');
+    const [initials, setInitials] = useState('');
 
+    // Navigation state for multi-page form (pages: 0 to 3)
+    const [currentPage, setCurrentPage] = useState(0);
+
+    const nextPage = () => {
+        if (currentPage < 3) setCurrentPage(currentPage + 1);
+    };
+
+    const prevPage = () => {
+        if (currentPage > 0) setCurrentPage(currentPage - 1);
+    };
+
+    // Submit function called on the final page
     const handleSubmit = async () => {
-        // Validation checks
-        const lettersOnlyRegex = /^[A-Za-z\s]+$/;
-        const numbersOnlyRegex = /^\d+$/;
-
-        // Check if any fields are empty
-        if (
-            !ownerName ||
-            !homeAddress ||
-            !city ||
-            !state ||
-            !zipCode ||
-            !cellPhone ||
-            !email ||
-            !petName ||
-            !species ||
-            !breed ||
-            !age ||
-            !color ||
-            !sex ||
-            !spayedOrNeutered ||
-            !microchip
-        ) {
-            Alert.alert(
-                "Error",
-                "Fill out the rest of the form before submitting!"
-            );
-            return; // Stop form submission
-        }
-
-        if (!initials) {
-            Alert.alert(
-                "Error",
-                "Please provide your initials to agree to the terms."
-            );
-            return;
-        }
-
-        // Check for letters-only fields
-        if (
-            !lettersOnlyRegex.test(species) ||
-            !lettersOnlyRegex.test(breed) ||
-            !lettersOnlyRegex.test(color)
-        ) {
-            Alert.alert(
-                "Error",
-                "Species, Breed, and Color should only contain letters."
-            );
-            return; // Stop form submission
-        }
-
-        // Check for numbers-only in Cell Phone Number
-        if (!numbersOnlyRegex.test(cellPhone)) {
-            Alert.alert(
-                "Error",
-                "Cell Phone Number should only contain numbers."
-            );
-            return; // Stop form submission
-        }
+        // Validation can be added here
 
         // Generate the timestamp when the form is submitted
-        const timestamp = new Date().toLocaleString("en-US", {
-            timeZone: "America/Los_Angeles",
+        const timestamp = new Date().toLocaleString('en-US', {
+            timeZone: 'America/Los_Angeles',
         });
 
-        // If all validations pass, proceed to submit the form
         const formData = {
             timestamp,
             ownerName,
@@ -117,271 +77,328 @@ export default function Index() {
 
         try {
             const responseMessage = await submitFormData(formData);
-            Alert.alert("Success", responseMessage);
+            Alert.alert('Success', responseMessage);
 
-            // Reset all input fields after successful submission
-            setOwnerName("");
-            setHomeAddress("");
-            setCity("");
-            setState("");
-            setZipCode("");
-            setCellPhone("");
-            setEmail("");
-            setPetName("");
-            setSpecies("");
-            setBreed("");
-            setAge("");
-            setSex("");
-            setSpayedOrNeutered("");
-            setColor("");
-            setMicrochip("");
-            setInitials("");
+            // Reset form fields
+            setOwnerName('');
+            setHomeAddress('');
+            setCity('');
+            setState('');
+            setZipCode('');
+            setCellPhone('');
+            setEmail('');
+            setPetName('');
+            setSpecies('');
+            setBreed('');
+            setAge('');
+            setSex('');
+            setSpayedOrNeutered('');
+            setColor('');
+            setMicrochip('');
+            setInitials('');
+            setCurrentPage(0); // Reset to the first page if desired
         } catch (error: any) {
-            Alert.alert("Error", `Failed to submit data: ${error.message}`);
+            Alert.alert('Error', `Failed to submit data: ${error.message}`);
         }
+    };
+
+    const [fontsLoaded] = useFonts({
+        Montserrat_400Regular,
+        Montserrat_700Bold,
+    });
+
+    if (!fontsLoaded) {
+        return <AppLoading />;
+    }
+
+    // Render form content based on the current page
+    const renderPageContent = () => {
+        switch (currentPage) {
+            case 0:
+                return (
+                    <>
+                        <Text style={styles.label}>Name:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Owner's First and Last Name"
+                            value={ownerName}
+                            onChangeText={setOwnerName}
+                        />
+                        <Text style={styles.label}>Address:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Home Address"
+                            value={homeAddress}
+                            onChangeText={setHomeAddress}
+                        />
+                        <Text style={styles.label}>City:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="City"
+                            value={city}
+                            onChangeText={setCity}
+                        />
+                        <Text style={styles.label}>State:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="State"
+                            value={state}
+                            onChangeText={setState}
+                        />
+                    </>
+                );
+            case 1:
+                return (
+                    <>
+                        <Text style={styles.label}>Zip Code:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Zip Code"
+                            value={zipCode}
+                            onChangeText={setZipCode}
+                        />
+                        <Text style={styles.label}>Number:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Cell Phone #"
+                            value={cellPhone}
+                            onChangeText={setCellPhone}
+                        />
+                        <Text style={styles.label}>Email:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="E-mail Address"
+                            value={email}
+                            onChangeText={setEmail}
+                        />
+                        <Text style={styles.label}>Pet Name:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Pet's Name"
+                            value={petName}
+                            onChangeText={setPetName}
+                        />
+                    </>
+                );
+            case 2:
+                return (
+                    <>
+                        <Text style={styles.label}>Species:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Species (Dog, Cat, etc.)"
+                            value={species}
+                            onChangeText={setSpecies}
+                        />
+                        <Text style={styles.label}>Breed:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Breed"
+                            value={breed}
+                            onChangeText={setBreed}
+                        />
+                        <Text style={styles.label}>Age:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Age/Date of Birth"
+                            value={age}
+                            onChangeText={setAge}
+                        />
+                        <Text style={styles.label}>Color:</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Color"
+                            value={color}
+                            onChangeText={setColor}
+                        />
+                    </>
+                );
+            case 3:
+                return (
+                    <>
+                        <Text style={styles.label}>Sex:</Text>
+                        <View style={styles.selectionButtons}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    sex === 'Male' && styles.selectedOption,
+                                ]}
+                                onPress={() => setSex('Male')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        sex === 'Male'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    Male
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    sex === 'Female' && styles.selectedOption,
+                                ]}
+                                onPress={() => setSex('Female')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        sex === 'Female'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    Female
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.label}>Spayed/Castrated:</Text>
+                        <View style={styles.selectionButtons}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    spayedOrNeutered === 'Yes' &&
+                                        styles.selectedOption,
+                                ]}
+                                onPress={() => setSpayedOrNeutered('Yes')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        spayedOrNeutered === 'Yes'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    Yes
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    spayedOrNeutered === 'No' &&
+                                        styles.selectedOption,
+                                ]}
+                                onPress={() => setSpayedOrNeutered('No')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        spayedOrNeutered === 'No'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    No
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.label}>Microchip:</Text>
+                        <View style={styles.selectionButtons}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    microchip === 'Yes' &&
+                                        styles.selectedOption,
+                                ]}
+                                onPress={() => setMicrochip('Yes')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        microchip === 'Yes'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    Yes
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.optionButton,
+                                    microchip === 'No' && styles.selectedOption,
+                                ]}
+                                onPress={() => setMicrochip('No')}
+                            >
+                                <Text
+                                    style={[
+                                        styles.optionText,
+                                        microchip === 'No'
+                                            ? styles.selectedText
+                                            : styles.unselectedText,
+                                    ]}
+                                >
+                                    No
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.label}>
+                            Initials (Agree to Terms):
+                        </Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter your initials"
+                            value={initials}
+                            onChangeText={setInitials}
+                        />
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    // Render navigation buttons:
+    // "Back" always on the left (if not on first page)
+    // On pages 0-2, "Next" is on the right.
+    // On page 3, "Submit" is on the right (green button).
+    const renderNavigation = () => {
+        return (
+            <View style={styles.navContainer}>
+                <View style={styles.navLeft}>
+                    {currentPage > 0 ? (
+                        <TouchableOpacity
+                            style={styles.navButton}
+                            onPress={prevPage}
+                        >
+                            <Text style={styles.navButtonText}>Back</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.navButtonPlaceholder} />
+                    )}
+                </View>
+                <View style={styles.navRight}>
+                    {currentPage < 3 ? (
+                        <TouchableOpacity
+                            style={styles.navButton}
+                            onPress={nextPage}
+                        >
+                            <Text style={styles.navButtonText}>Next</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity
+                            style={[styles.navButton, styles.submitButton]}
+                            onPress={handleSubmit}
+                        >
+                            <Text style={styles.navButtonText}>Submit</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </View>
+        );
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.label}>Name:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Owner's First and Last Name"
-                value={ownerName}
-                onChangeText={setOwnerName}
-            />
-            <Text style={styles.label}>Address:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Home Address"
-                value={homeAddress}
-                onChangeText={setHomeAddress}
-            />
-            {/* Row for City, State, Zip Code */}
-            <View style={styles.row}>
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="City"
-                    value={city}
-                    onChangeText={setCity}
-                />
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="State"
-                    value={state}
-                    onChangeText={setState}
-                />
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="Zip Code"
-                    value={zipCode}
-                    onChangeText={setZipCode}
-                />
-            </View>
-
-            <Text style={styles.label}>Number:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Cell Phone #"
-                value={cellPhone}
-                onChangeText={setCellPhone}
-            />
-            <Text style={styles.label}>Email:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="E-mail Address"
-                value={email}
-                onChangeText={setEmail}
-            />
-
-            <Text style={styles.label}>Pet Information:</Text>
-            {/* Row for Pet's Name and Species */}
-            <View style={styles.row}>
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="Pet's Name"
-                    value={petName}
-                    onChangeText={setPetName}
-                />
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="Species (Dog, Cat, Bird)"
-                    value={species}
-                    onChangeText={setSpecies}
-                />
-            </View>
-            <View style={styles.row}>
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="Breed"
-                    value={breed}
-                    onChangeText={setBreed}
-                />
-                <TextInput
-                    style={[styles.input, styles.inputFlex]}
-                    placeholder="Age/Date of Birth"
-                    value={age}
-                    onChangeText={setAge}
-                />
-            </View>
-            <TextInput
-                style={styles.input}
-                placeholder="Color"
-                value={color}
-                onChangeText={setColor}
-            />
-
-            {/* Button Selection */}
-            <View style={styles.selectionContainer}>
-                <Text style={styles.label}>Sex:</Text>
-                <View style={styles.selectionButtons}>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            sex === "Male" && styles.selectedOption,
-                        ]}
-                        onPress={() => setSex("Male")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                sex === "Male"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            Male
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            sex === "Female" && styles.selectedOption,
-                        ]}
-                        onPress={() => setSex("Female")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                sex === "Female"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            Female
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Spayed/Castrated Selection */}
-            <View style={styles.selectionContainer}>
-                <Text style={styles.label}>Spayed/Castrated:</Text>
-                <View style={styles.selectionButtons}>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            spayedOrNeutered === "Yes" && styles.selectedOption,
-                        ]}
-                        onPress={() => setSpayedOrNeutered("Yes")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                spayedOrNeutered === "Yes"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            Yes
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            spayedOrNeutered === "No" && styles.selectedOption,
-                        ]}
-                        onPress={() => setSpayedOrNeutered("No")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                spayedOrNeutered === "No"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            No
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Microchip Selection */}
-            <View style={styles.selectionContainer}>
-                <Text style={styles.label}>Microchip:</Text>
-                <View style={styles.selectionButtons}>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            microchip === "Yes" && styles.selectedOption,
-                        ]}
-                        onPress={() => setMicrochip("Yes")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                microchip === "Yes"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            Yes
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.optionButton,
-                            microchip === "No" && styles.selectedOption,
-                        ]}
-                        onPress={() => setMicrochip("No")}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                microchip === "No"
-                                    ? styles.selectedText
-                                    : styles.unselectedText,
-                            ]}
-                        >
-                            No
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <Text style={styles.label}>Terms:</Text>
-            <Text style={styles.label}>
-                All fees are due and payable prior to the release of the
-                patient. Upon your request, we can provide you with a written
-                estimate of fees for any treatments, emergency care, surgery, or
-                hospitalization services to be performed.
-            </Text>
-            <Text style={styles.label}>
-                You understand and approve all necessary after-office-hours
-                veterinary services that may be performed on your pet in the
-                judgment of the veterinarian. You are also aware that the
-                continuous presence of veterinary personnel may not be provided
-                after office hours as this is not a 24-hour facility.
-            </Text>
-            {/* Initials input field */}
-            <TextInput
-                style={styles.input}
-                placeholder="Enter your initials to agree"
-                value={initials}
-                onChangeText={setInitials}
-            />
-
-            <Button title="Submit" onPress={handleSubmit} />
+            {renderPageContent()}
+            {renderNavigation()}
         </ScrollView>
     );
 }
@@ -390,56 +407,82 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 20,
-        alignItems: "stretch",
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        backgroundColor: '#FAFAFA', // or #FBF2ED
     },
     input: {
-        width: "100%",
+        width: '100%',
         height: 40,
-        borderColor: "gray",
+        borderColor: 'gray',
         borderWidth: 1,
+        borderRadius: 5,
         marginBottom: 15,
         paddingLeft: 10,
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 0,
-    },
-    inputFlex: {
-        flex: 1,
-        marginRight: 5,
-        marginLeft: 5,
-    },
-    selectionContainer: {
-        marginBottom: 10,
+        fontFamily: 'Montserrat_400Regular',
     },
     label: {
         fontSize: 16,
+        marginLeft: 2,
         marginBottom: 5,
+        fontFamily: 'Montserrat_700Bold',
     },
     selectionButtons: {
-        flexDirection: "row",
+        flexDirection: 'row',
+        marginBottom: 15,
     },
     optionButton: {
         flex: 1,
-        alignItems: "center",
+        alignItems: 'center',
         padding: 10,
-        borderColor: "gray",
+        borderColor: 'gray',
         borderWidth: 1,
         borderRadius: 5,
-        marginRight: 10,
+        marginHorizontal: 5,
     },
     selectedOption: {
-        backgroundColor: "#007BFF",
+        backgroundColor: '#007BFF',
     },
     optionText: {
         fontSize: 16,
     },
     unselectedText: {
-        color: "black",
+        color: 'black',
+        fontFamily: 'Montserrat_400Regular',
     },
     selectedText: {
-        color: "white",
+        color: 'white',
+        fontFamily: 'Montserrat_400Regular',
+    },
+    navContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+    },
+    navLeft: {
+        flex: 1,
+        justifyContent: 'flex-start',
+    },
+    navRight: {
+        flex: 1,
+        alignItems: 'flex-end',
+    },
+    navButton: {
+        padding: 10,
+        backgroundColor: '#007BFF', // or any other background color
+        borderRadius: 5,
+        width: 100,
+        alignItems: 'center',
+    },
+    submitButton: {
+        backgroundColor: 'green',
+    },
+    navButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontFamily: 'Montserrat_700Bold',
+    },
+    navButtonPlaceholder: {
+        width: 100,
     },
 });

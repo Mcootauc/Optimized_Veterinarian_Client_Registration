@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     View,
     TextInput,
@@ -7,6 +7,7 @@ import {
     ScrollView,
     Text,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import {
@@ -37,13 +38,29 @@ export default function Index() {
 
     // Navigation state for multi-page form (pages: 0 to 3)
     const [currentPage, setCurrentPage] = useState(0);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const width = Dimensions.get('window').width;
 
     const nextPage = () => {
-        if (currentPage < 3) setCurrentPage(currentPage + 1);
+        if (currentPage < 3) {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            scrollViewRef.current?.scrollTo({
+                x: newPage * width,
+                animated: true,
+            });
+        }
     };
 
     const prevPage = () => {
-        if (currentPage > 0) setCurrentPage(currentPage - 1);
+        if (currentPage > 0) {
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            scrollViewRef.current?.scrollTo({
+                x: newPage * width,
+                animated: true,
+            });
+        }
     };
 
     // Submit function called on the final page
@@ -97,6 +114,7 @@ export default function Index() {
             setMicrochip('');
             setInitials('');
             setCurrentPage(0); // Reset to the first page if desired
+            scrollViewRef.current?.scrollTo({ x: 0, animated: true });
         } catch (error: any) {
             Alert.alert('Error', `Failed to submit data: ${error.message}`);
         }
@@ -111,12 +129,16 @@ export default function Index() {
         return <AppLoading />;
     }
 
-    // Render form content based on the current page
-    const renderPageContent = () => {
-        switch (currentPage) {
+    // Render navigation buttons:
+    // "Back" always on the left (if not on first page)
+    // On pages 0-2, "Next" is on the right.
+    // On page 3, "Submit" is on the right (green button).
+    // Render content for a given page number
+    const renderPageContent = (page: number) => {
+        switch (page) {
             case 0:
                 return (
-                    <>
+                    <View style={styles.page}>
                         <Text style={styles.label}>Name:</Text>
                         <TextInput
                             style={styles.input}
@@ -145,11 +167,11 @@ export default function Index() {
                             value={state}
                             onChangeText={setState}
                         />
-                    </>
+                    </View>
                 );
             case 1:
                 return (
-                    <>
+                    <View style={styles.page}>
                         <Text style={styles.label}>Zip Code:</Text>
                         <TextInput
                             style={styles.input}
@@ -178,11 +200,11 @@ export default function Index() {
                             value={petName}
                             onChangeText={setPetName}
                         />
-                    </>
+                    </View>
                 );
             case 2:
                 return (
-                    <>
+                    <View style={styles.page}>
                         <Text style={styles.label}>Species:</Text>
                         <TextInput
                             style={styles.input}
@@ -211,11 +233,11 @@ export default function Index() {
                             value={color}
                             onChangeText={setColor}
                         />
-                    </>
+                    </View>
                 );
             case 3:
                 return (
-                    <>
+                    <View style={styles.page}>
                         <Text style={styles.label}>Sex:</Text>
                         <View style={styles.selectionButtons}>
                             <TouchableOpacity
@@ -342,25 +364,43 @@ export default function Index() {
                         <Text style={styles.label}>
                             Initials (Agree to Terms):
                         </Text>
+                        <Text style={styles.terms}>
+                            All fees are due and payable prior to the release of
+                            the patient. Upon your request, we can provide you
+                            with a written estimate of fees for any treatments,
+                            emergency care, surgery, or hospitalization services
+                            to be performed.
+                        </Text>
+                        <Text style={styles.terms}>
+                            You understand and approve all necessary
+                            after-office-hours veterinary services that may be
+                            performed on your pet in the judgment of the
+                            veterinarian. You are also aware that the continuous
+                            presence of veterinary personnel may not be provided
+                            after office hours as this is not a 24-hour
+                            facility.
+                        </Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your initials"
                             value={initials}
                             onChangeText={setInitials}
                         />
-                    </>
+                    </View>
                 );
             default:
                 return null;
         }
     };
 
-    // Render navigation buttons:
-    // "Back" always on the left (if not on first page)
-    // On pages 0-2, "Next" is on the right.
-    // On page 3, "Submit" is on the right (green button).
-    const renderNavigation = () => {
-        return (
+    return (
+        <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
+            <ScrollView horizontal pagingEnabled ref={scrollViewRef}>
+                {renderPageContent(0)}
+                {renderPageContent(1)}
+                {renderPageContent(2)}
+                {renderPageContent(3)}
+            </ScrollView>
             <View style={styles.navContainer}>
                 <View style={styles.navLeft}>
                     {currentPage > 0 ? (
@@ -373,6 +413,11 @@ export default function Index() {
                     ) : (
                         <View style={styles.navButtonPlaceholder} />
                     )}
+                </View>
+                <View style={styles.navCenter}>
+                    <Text style={styles.pageCount}>{`${
+                        currentPage + 1
+                    }/4 pages`}</Text>
                 </View>
                 <View style={styles.navRight}>
                     {currentPage < 3 ? (
@@ -392,18 +437,16 @@ export default function Index() {
                     )}
                 </View>
             </View>
-        );
-    };
-
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {renderPageContent()}
-            {renderNavigation()}
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    page: {
+        width: Dimensions.get('window').width,
+        padding: 20,
+        justifyContent: 'center',
+    },
     container: {
         flexGrow: 1,
         padding: 20,
@@ -420,6 +463,11 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingLeft: 10,
         fontFamily: 'Montserrat_400Regular',
+    },
+    terms: {
+        fontSize: 12,
+        fontFamily: 'Montserrat_400Regular',
+        paddingBottom: 10,
     },
     label: {
         fontSize: 16,
@@ -457,15 +505,22 @@ const styles = StyleSheet.create({
     navContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20,
+        alignItems: 'center',
+        marginBottom: 20,
     },
     navLeft: {
         flex: 1,
         justifyContent: 'flex-start',
+        marginLeft: 15,
     },
     navRight: {
         flex: 1,
         alignItems: 'flex-end',
+        marginRight: 15,
+    },
+    navCenter: {
+        flex: 1,
+        alignItems: 'center',
     },
     navButton: {
         padding: 10,
@@ -484,5 +539,9 @@ const styles = StyleSheet.create({
     },
     navButtonPlaceholder: {
         width: 100,
+    },
+    pageCount: {
+        fontSize: 16,
+        fontFamily: 'Montserrat_700Bold',
     },
 });

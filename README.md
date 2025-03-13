@@ -16,4 +16,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
      npx expo start
     ```
 
+npm install @supabase/supabase-js
+npx expo install expo-dev-client
+eas build --profile development --platform android
 eas build --platform android --profile production

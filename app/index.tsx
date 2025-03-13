@@ -15,7 +15,7 @@ import {
     Montserrat_400Regular,
     Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
-import { submitFormData } from '../components/GoogleSheetsService';
+import { submitFormData } from '../components/SupabaseService';
 
 export default function Index() {
     // Form fields

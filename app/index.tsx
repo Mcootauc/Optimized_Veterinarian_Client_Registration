@@ -8,6 +8,7 @@ import {
     Text,
     TouchableOpacity,
     Dimensions,
+    ActivityIndicator,
 } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import {
@@ -18,6 +19,9 @@ import {
 import { submitFormData } from '../components/SupabaseService';
 
 export default function Index() {
+    // Add loading state
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     // Form fields
     const [ownerName, setOwnerName] = useState('');
     const [homeAddress, setHomeAddress] = useState('');
@@ -65,34 +69,33 @@ export default function Index() {
 
     // Submit function called on the final page
     const handleSubmit = async () => {
-        // Validation can be added here
-
-        // Generate the timestamp when the form is submitted
-        const timestamp = new Date().toLocaleString('en-US', {
-            timeZone: 'America/Los_Angeles',
-        });
-
-        const formData = {
-            timestamp,
-            ownerName,
-            homeAddress,
-            city,
-            state,
-            zipCode,
-            cellPhone,
-            email,
-            petName,
-            species,
-            breed,
-            age,
-            sex,
-            spayedOrNeutered,
-            color,
-            microchip,
-            initials,
-        };
+        // Set loading state to true
+        setIsSubmitting(true);
 
         try {
+            // Generate the timestamp in ISO format (fix the timestamp issue)
+            const timestamp = new Date().toISOString();
+
+            const formData = {
+                timestamp,
+                ownerName,
+                homeAddress,
+                city,
+                state,
+                zipCode,
+                cellPhone,
+                email,
+                petName,
+                species,
+                breed,
+                age,
+                sex,
+                spayedOrNeutered,
+                color,
+                microchip,
+                initials,
+            };
+
             const responseMessage = await submitFormData(formData);
             Alert.alert('Success', responseMessage);
 
@@ -117,6 +120,9 @@ export default function Index() {
             scrollViewRef.current?.scrollTo({ x: 0, animated: true });
         } catch (error: any) {
             Alert.alert('Error', `Failed to submit data: ${error.message}`);
+        } finally {
+            // Set loading state back to false when done
+            setIsSubmitting(false);
         }
     };
 
@@ -407,6 +413,7 @@ export default function Index() {
                         <TouchableOpacity
                             style={styles.navButton}
                             onPress={prevPage}
+                            disabled={isSubmitting}
                         >
                             <Text style={styles.navButtonText}>Back</Text>
                         </TouchableOpacity>
@@ -424,6 +431,7 @@ export default function Index() {
                         <TouchableOpacity
                             style={styles.navButton}
                             onPress={nextPage}
+                            disabled={isSubmitting}
                         >
                             <Text style={styles.navButtonText}>Next</Text>
                         </TouchableOpacity>
@@ -431,8 +439,24 @@ export default function Index() {
                         <TouchableOpacity
                             style={[styles.navButton, styles.submitButton]}
                             onPress={handleSubmit}
+                            disabled={isSubmitting}
                         >
-                            <Text style={styles.navButtonText}>Submit</Text>
+                            {isSubmitting ? (
+                                <View style={styles.loaderContainer}>
+                                    <ActivityIndicator
+                                        size="small"
+                                        color="#fff"
+                                    />
+                                    <Text
+                                        style={[
+                                            styles.navButtonText,
+                                            styles.loaderText,
+                                        ]}
+                                    ></Text>
+                                </View>
+                            ) : (
+                                <Text style={styles.navButtonText}>Submit</Text>
+                            )}
                         </TouchableOpacity>
                     )}
                 </View>
@@ -543,5 +567,13 @@ const styles = StyleSheet.create({
     pageCount: {
         fontSize: 16,
         fontFamily: 'Montserrat_700Bold',
+    },
+    loaderContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loaderText: {
+        marginLeft: 5,
     },
 });

@@ -19,7 +19,7 @@ export const submitFormData = async (formData: any) => {
                 pet_name: formData.petName,
                 species: formData.species,
                 breed: formData.breed,
-                age: formData.age,
+                birth_date: formData.birthDate,
                 sex: formData.sex,
                 spayed_or_neutered: formData.spayedOrNeutered === 'Yes',
                 color: formData.color,

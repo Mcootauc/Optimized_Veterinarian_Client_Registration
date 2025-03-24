@@ -19,7 +19,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npm install react-native-google-places-autocomplete
     npm install react-native-dropdown-picker
     npm install react-native-get-random-values
+    npm install expo-splash-screen
+    npm install react-native-vector-icons
     npm install @supabase/supabase-js
     npx expo install expo-dev-client
+    npx expo install @react-native-community/datetimepicker
+    npx expo install @react-native-picker/picker
+    
     eas build --profile development --platform android
     eas build --platform android --profile production

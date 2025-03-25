@@ -19,6 +19,7 @@ import { submitFormData } from '../components/SupabaseService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import 'react-native-get-random-values';
 
 const containsEmoji = (text: string) => {
     const emojiRegex = /[\u{1F300}-\u{1F9FF}]/u;
@@ -94,6 +95,7 @@ export default function Index() {
     const [birthDate, setBirthDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectSpecies, setSelectSpecies] = useState('');
+    const [address, setAddress] = useState('');
 
     // Add this function to format the date for display
     const formatDate = (date: Date | null) => {
@@ -406,6 +408,7 @@ export default function Index() {
     // On page 3, "Submit" is on the right (green button).
     // Render content for a given page number
     const renderPageContent = (page: number) => {
+        console.log(process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY);
         switch (page) {
             case 0:
                 return (
@@ -430,7 +433,20 @@ export default function Index() {
                         ) : null}
 
                         <Text style={styles.label}>Address:</Text>
-                        <TextInput
+                        <GooglePlacesAutocomplete
+                            fetchDetails={true}
+                            placeholder="Search"
+                            onPress={(data, details = null) => {
+                                setHomeAddress(data.description);
+                                console.log(details);
+                            }}
+                            query={{
+                                key: process.env
+                                    .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                                language: 'en',
+                            }}
+                        />
+                        {/* <TextInput
                             style={[
                                 styles.input,
                                 addressError ? styles.inputError : null,
@@ -441,7 +457,7 @@ export default function Index() {
                                 setHomeAddress(text);
                                 setAddressError('');
                             }}
-                        />
+                        /> */}
                         {addressError ? (
                             <Text style={styles.errorText}>{addressError}</Text>
                         ) : null}
@@ -1026,5 +1042,20 @@ const styles = StyleSheet.create({
     dateButtonText: {
         color: '#000',
         fontFamily: 'Montserrat_400Regular',
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        height: 50,
+        borderRadius: 25,
+        paddingLeft: 25,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    inputContainer: {
+        width: '95%',
     },
 });

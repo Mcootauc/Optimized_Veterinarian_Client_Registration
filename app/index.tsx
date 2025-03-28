@@ -18,7 +18,10 @@ import {
 import { submitFormData } from '../components/SupabaseService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {
+    GooglePlacesAutocomplete,
+    PlaceType,
+} from 'react-native-google-places-autocomplete';
 import 'react-native-get-random-values';
 
 const containsEmoji = (text: string) => {
@@ -51,6 +54,7 @@ export default function Index() {
     // Form fields
     const [ownerName, setOwnerName] = useState('');
     const [homeAddress, setHomeAddress] = useState('');
+    const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
@@ -72,11 +76,8 @@ export default function Index() {
     // Add error states for page 1
     const [ownerNameError, setOwnerNameError] = useState('');
     const [addressError, setAddressError] = useState('');
-    const [cityError, setCityError] = useState('');
-    const [stateError, setStateError] = useState('');
 
     // Page 2 errors
-    const [zipCodeError, setZipCodeError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [petNameError, setPetNameError] = useState('');
@@ -113,9 +114,9 @@ export default function Index() {
 
         // Reset all error states
         setOwnerNameError('');
+        setEmailError('');
+        setPhoneError('');
         setAddressError('');
-        setCityError('');
-        setStateError('');
 
         // Owner Name validation
         if (!ownerName.trim()) {
@@ -126,6 +127,24 @@ export default function Index() {
             isValid = false;
         } else if (!containsOnlyLettersAndSpaces(ownerName)) {
             setOwnerNameError('Name can only contain letters');
+            isValid = false;
+        }
+
+        // Email validation
+        if (!email.trim()) {
+            setEmailError('Email is required');
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            isValid = false;
+        }
+
+        // Phone validation
+        if (!cellPhone.trim()) {
+            setPhoneError('Phone number is required');
+            isValid = false;
+        } else if (!isValidPhone(cellPhone)) {
+            setPhoneError('Please enter a valid 10-digit phone number');
             isValid = false;
         }
 
@@ -141,30 +160,6 @@ export default function Index() {
             isValid = false;
         }
 
-        // City validation
-        if (!city.trim()) {
-            setCityError('City is required');
-            isValid = false;
-        } else if (containsEmoji(city)) {
-            setCityError('City cannot contain emojis');
-            isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(city)) {
-            setCityError('City can only contain letters');
-            isValid = false;
-        }
-
-        // State validation
-        if (!state.trim()) {
-            setStateError('State is required');
-            isValid = false;
-        } else if (containsEmoji(state)) {
-            setStateError('State cannot contain emojis');
-            isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(state)) {
-            setStateError('State can only contain letters');
-            isValid = false;
-        }
-
         return isValid;
     };
 
@@ -173,39 +168,10 @@ export default function Index() {
         let isValid = true;
 
         // Reset errors
-        setZipCodeError('');
-        setPhoneError('');
-        setEmailError('');
         setPetNameError('');
-
-        // Zip Code validation
-        if (!zipCode.trim()) {
-            setZipCodeError('Zip code is required');
-            isValid = false;
-        } else if (!isValidZipCode(zipCode)) {
-            setZipCodeError(
-                'Please enter a valid zip code (e.g., 12345 or 12345-6789)'
-            );
-            isValid = false;
-        }
-
-        // Phone validation
-        if (!cellPhone.trim()) {
-            setPhoneError('Phone number is required');
-            isValid = false;
-        } else if (!isValidPhone(cellPhone)) {
-            setPhoneError('Please enter a valid 10-digit phone number');
-            isValid = false;
-        }
-
-        // Email validation
-        if (!email.trim()) {
-            setEmailError('Email is required');
-            isValid = false;
-        } else if (!isValidEmail(email)) {
-            setEmailError('Please enter a valid email address');
-            isValid = false;
-        }
+        setSpeciesError('');
+        setBreedError('');
+        setBirthDateError('');
 
         // Pet name validation
         if (!petName.trim()) {
@@ -213,6 +179,24 @@ export default function Index() {
             isValid = false;
         } else if (containsEmoji(petName)) {
             setPetNameError('Pet name cannot contain emojis');
+            isValid = false;
+        }
+
+        // Species validation
+        if (selectSpecies === null || !selectSpecies.trim()) {
+            setSpeciesError('Species is required');
+            isValid = false;
+        }
+
+        // Breed validation
+        if (!breed.trim()) {
+            setBreedError('Breed is required');
+            isValid = false;
+        }
+
+        // Birth date validation
+        if (!birthDate) {
+            setBirthDateError('Birth date is required');
             isValid = false;
         }
 
@@ -224,28 +208,32 @@ export default function Index() {
         let isValid = true;
 
         // Reset errors
-        setSpeciesError('');
-        setBreedError('');
-        setBirthDateError('');
         setColorError('');
+        setSexError('');
+        setSpayedNeuteredError('');
+        setMicrochipError('');
 
-        if (!selectSpecies.trim()) {
-            setSpeciesError('Species is required');
-            isValid = false;
-        }
-
-        if (!breed.trim()) {
-            setBreedError('Breed is required');
-            isValid = false;
-        }
-
-        if (!birthDate) {
-            setBirthDateError('Birth date is required');
-            isValid = false;
-        }
-
+        // Color validation
         if (!color.trim()) {
             setColorError('Color is required');
+            isValid = false;
+        }
+
+        // Sex validation
+        if (!sex) {
+            setSexError('Please select a sex');
+            isValid = false;
+        }
+
+        // Spayed or neutered validation
+        if (!spayedOrNeutered) {
+            setSpayedNeuteredError('Please select yes or no');
+            isValid = false;
+        }
+
+        // Microchip validation
+        if (!microchip) {
+            setMicrochipError('Please select yes or no');
             isValid = false;
         }
 
@@ -256,26 +244,9 @@ export default function Index() {
         let isValid = true;
 
         // Reset errors
-        setSexError('');
-        setSpayedNeuteredError('');
-        setMicrochipError('');
         setInitialsError('');
 
-        if (!sex) {
-            setSexError('Please select a sex');
-            isValid = false;
-        }
-
-        if (!spayedOrNeutered) {
-            setSpayedNeuteredError('Please select yes or no');
-            isValid = false;
-        }
-
-        if (!microchip) {
-            setMicrochipError('Please select yes or no');
-            isValid = false;
-        }
-
+        // Initials validation
         if (!initials.trim()) {
             setInitialsError(
                 'Please enter your initials to agree to the terms'
@@ -333,6 +304,14 @@ export default function Index() {
             setBirthDateError('');
         }
     };
+
+    // Add this component near the top of the file, after the imports
+    const RequiredLabel = ({ text }: { text: string }) => (
+        <Text style={styles.label}>
+            {text}
+            <Text style={styles.required}>*</Text>
+        </Text>
+    );
 
     // Update handleSubmit to validate before submitting
     const handleSubmit = async () => {
@@ -408,12 +387,12 @@ export default function Index() {
     // On page 3, "Submit" is on the right (green button).
     // Render content for a given page number
     const renderPageContent = (page: number) => {
-        console.log(process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY);
+        // console.log(process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY);
         switch (page) {
             case 0:
                 return (
                     <View style={[styles.page, { width }]}>
-                        <Text style={styles.label}>Name:</Text>
+                        <RequiredLabel text="Full Name" />
                         <TextInput
                             style={[
                                 styles.input,
@@ -432,109 +411,7 @@ export default function Index() {
                             </Text>
                         ) : null}
 
-                        <Text style={styles.label}>Address:</Text>
-                        <GooglePlacesAutocomplete
-                            fetchDetails={true}
-                            placeholder="Search"
-                            onPress={(data, details = null) => {
-                                setHomeAddress(data.description);
-                                console.log(details);
-                            }}
-                            query={{
-                                key: process.env
-                                    .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
-                                language: 'en',
-                            }}
-                        />
-                        {/* <TextInput
-                            style={[
-                                styles.input,
-                                addressError ? styles.inputError : null,
-                            ]}
-                            placeholder="Home Address"
-                            value={homeAddress}
-                            onChangeText={(text) => {
-                                setHomeAddress(text);
-                                setAddressError('');
-                            }}
-                        /> */}
-                        {addressError ? (
-                            <Text style={styles.errorText}>{addressError}</Text>
-                        ) : null}
-
-                        <Text style={styles.label}>City:</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                cityError ? styles.inputError : null,
-                            ]}
-                            placeholder="City"
-                            value={city}
-                            onChangeText={(text) => {
-                                setCity(text);
-                                setCityError('');
-                            }}
-                        />
-                        {cityError ? (
-                            <Text style={styles.errorText}>{cityError}</Text>
-                        ) : null}
-
-                        <Text style={styles.label}>State:</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                stateError ? styles.inputError : null,
-                            ]}
-                            placeholder="State"
-                            value={state}
-                            onChangeText={(text) => {
-                                setState(text);
-                                setStateError('');
-                            }}
-                        />
-                        {stateError ? (
-                            <Text style={styles.errorText}>{stateError}</Text>
-                        ) : null}
-                    </View>
-                );
-            case 1:
-                return (
-                    <View style={[styles.page, { width }]}>
-                        <Text style={styles.label}>Zip Code:</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                zipCodeError ? styles.inputError : null,
-                            ]}
-                            placeholder="Zip Code"
-                            value={zipCode}
-                            onChangeText={(text) => {
-                                setZipCode(text);
-                                setZipCodeError('');
-                            }}
-                        />
-                        {zipCodeError ? (
-                            <Text style={styles.errorText}>{zipCodeError}</Text>
-                        ) : null}
-
-                        <Text style={styles.label}>Number:</Text>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                phoneError ? styles.inputError : null,
-                            ]}
-                            placeholder="Cell Phone #"
-                            value={cellPhone}
-                            onChangeText={(text) => {
-                                setCellPhone(text);
-                                setPhoneError('');
-                            }}
-                        />
-                        {phoneError ? (
-                            <Text style={styles.errorText}>{phoneError}</Text>
-                        ) : null}
-
-                        <Text style={styles.label}>Email:</Text>
+                        <RequiredLabel text="Email" />
                         <TextInput
                             style={[
                                 styles.input,
@@ -550,8 +427,110 @@ export default function Index() {
                         {emailError ? (
                             <Text style={styles.errorText}>{emailError}</Text>
                         ) : null}
+                        <RequiredLabel text="Number" />
+                        <TextInput
+                            style={[
+                                styles.input,
+                                phoneError ? styles.inputError : null,
+                            ]}
+                            placeholder="Cell Phone #"
+                            value={cellPhone}
+                            onChangeText={(text) => {
+                                setCellPhone(text);
+                                setPhoneError('');
+                            }}
+                        />
+                        {phoneError ? (
+                            <Text style={styles.errorText}>{phoneError}</Text>
+                        ) : null}
+                        <RequiredLabel text="Address" />
+                        <GooglePlacesAutocomplete
+                            fetchDetails={true}
+                            placeholder="Search for address"
+                            enablePoweredByContainer={false}
+                            onFail={(error) => console.error(error)}
+                            onNotFound={() => console.log('no results')}
+                            onTimeout={() => console.log('timeout')}
+                            timeout={20000}
+                            styles={{
+                                container: {
+                                    marginBottom: 15,
+                                    zIndex: 1, // Make sure it appears above other elements
+                                },
+                                textInput: {
+                                    height: 60,
+                                    fontSize: 23,
+                                    fontFamily: 'Montserrat_400Regular',
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    borderRadius: 5,
+                                    paddingLeft: 10,
+                                },
+                                listView: {
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    backgroundColor: 'white',
+                                    marginTop: 2,
+                                },
+                                row: {
+                                    padding: 13,
+                                    height: 60,
+                                    fontSize: 16,
+                                    fontFamily: 'Montserrat_400Regular',
+                                },
+                                description: {
+                                    fontFamily: 'Montserrat_400Regular',
+                                    fontSize: 16,
+                                },
+                            }}
+                            query={{
+                                key: process.env
+                                    .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                                language: 'en',
+                            }}
+                            textInputProps={{
+                                placeholderTextColor: 'gray',
+                            }}
+                            onPress={(data, details = null) => {
+                                const components = details?.address_components;
+                                const getComponent = (type: string) =>
+                                    components?.find((c) =>
+                                        c.types.includes(type as PlaceType)
+                                    )?.long_name ?? '';
+                                const streetNumber =
+                                    getComponent('street_number');
+                                const route = getComponent('route');
 
-                        <Text style={styles.label}>Pet Name:</Text>
+                                const fullStreet =
+                                    `${streetNumber} ${route}`.trim();
+                                setStreet(fullStreet); // 👈 sets your street state
+                                setHomeAddress(data.description);
+                                setCity(getComponent('locality'));
+                                setState(
+                                    getComponent('administrative_area_level_1')
+                                );
+                                setZipCode(getComponent('postal_code'));
+                                console.log('FULL STREET', fullStreet);
+                                console.log('CITY', getComponent('locality'));
+                                console.log(
+                                    'STATE',
+                                    getComponent('administrative_area_level_1')
+                                );
+                                console.log(
+                                    'ZIP CODE',
+                                    getComponent('postal_code')
+                                );
+                            }}
+                        />
+                        {addressError ? (
+                            <Text style={styles.errorText}>{addressError}</Text>
+                        ) : null}
+                    </View>
+                );
+            case 1:
+                return (
+                    <View style={[styles.page, { width }]}>
+                        <RequiredLabel text="Pet Name" />
                         <TextInput
                             style={[
                                 styles.input,
@@ -567,62 +546,58 @@ export default function Index() {
                         {petNameError ? (
                             <Text style={styles.errorText}>{petNameError}</Text>
                         ) : null}
-                    </View>
-                );
-            case 2:
-                return (
-                    <View style={[styles.page, { width }]}>
-                        <Text style={styles.label}>Species:</Text>
-                        <RNPickerSelect
-                            style={{
-                                inputAndroid: {
-                                    fontSize: 16,
-                                    fontFamily: 'Montserrat_400Regular',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 10,
-                                    borderWidth: 1,
-                                    borderColor: 'gray',
-                                    borderRadius: 5,
-                                    color: 'gray',
-                                },
-                                // iOS just in case
-                                inputIOS: {
-                                    fontSize: 16,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 10,
-                                    borderWidth: 1,
-                                    borderColor: 'gray',
-                                    borderRadius: 5,
-                                    color: 'gray',
-                                },
-                                viewContainer: {
-                                    borderWidth: 1,
-                                    borderColor: 'gray',
-                                    borderRadius: 5,
-                                    marginBottom: 15,
-                                },
-                            }}
-                            placeholder={{
-                                label: 'Species (Dog, Cat, etc.)',
-                                value: null,
-                                color: 'gray',
-                            }}
-                            value={selectSpecies}
-                            onValueChange={(value) => {
-                                setSelectSpecies(value);
-                                setSpeciesError('');
-                            }}
-                            items={[
-                                { label: 'Dog', value: 'Dog' },
-                                { label: 'Cat', value: 'Cat' },
-                                { label: 'Other', value: 'Other' },
-                            ]}
-                        />
-                        {speciesError ? (
-                            <Text style={styles.errorText}>{speciesError}</Text>
-                        ) : null}
 
-                        <Text style={styles.label}>Breed:</Text>
+                        <View style={styles.inputGroup}>
+                            <RequiredLabel text="Species" />
+                            <View style={styles.pickerContainer}>
+                                <RNPickerSelect
+                                    style={{
+                                        inputAndroid: {
+                                            fontSize: 23,
+                                            fontFamily: 'Montserrat_400Regular',
+                                            paddingVertical: 10,
+                                            paddingHorizontal: 10,
+                                            color: 'black',
+                                        },
+                                        inputIOS: {
+                                            fontSize: 23,
+                                            fontFamily: 'Montserrat_400Regular',
+                                            paddingVertical: 10,
+                                            paddingHorizontal: 10,
+                                            color: 'black',
+                                        },
+                                        placeholder: {
+                                            color: 'gray',
+                                            fontSize: 23,
+                                            fontFamily: 'Montserrat_400Regular',
+                                        },
+                                        // No need for viewContainer styling when we're wrapping it
+                                    }}
+                                    placeholder={{
+                                        label: 'Species (Dog, Cat, etc.)',
+                                        value: null,
+                                        color: 'gray',
+                                    }}
+                                    value={selectSpecies}
+                                    onValueChange={(value) => {
+                                        setSelectSpecies(value);
+                                        setSpeciesError('');
+                                    }}
+                                    items={[
+                                        { label: 'Dog', value: 'Dog' },
+                                        { label: 'Cat', value: 'Cat' },
+                                        { label: 'Other', value: 'Other' },
+                                    ]}
+                                />
+                            </View>
+                            {speciesError ? (
+                                <Text style={styles.errorText}>
+                                    {speciesError}
+                                </Text>
+                            ) : null}
+                        </View>
+
+                        <RequiredLabel text="Breed" />
                         <TextInput
                             style={[
                                 styles.input,
@@ -639,7 +614,7 @@ export default function Index() {
                             <Text style={styles.errorText}>{breedError}</Text>
                         ) : null}
 
-                        <Text style={styles.label}>Birth Date:</Text>
+                        <RequiredLabel text="Birth Date" />
                         <TouchableOpacity
                             style={[
                                 styles.input,
@@ -669,8 +644,12 @@ export default function Index() {
                                 maximumDate={new Date()} // Prevents future dates
                             />
                         )}
-
-                        <Text style={styles.label}>Color:</Text>
+                    </View>
+                );
+            case 2:
+                return (
+                    <View style={[styles.page, { width }]}>
+                        <RequiredLabel text="Color" />
                         <TextInput
                             style={[
                                 styles.input,
@@ -686,12 +665,7 @@ export default function Index() {
                         {colorError ? (
                             <Text style={styles.errorText}>{colorError}</Text>
                         ) : null}
-                    </View>
-                );
-            case 3:
-                return (
-                    <View style={[styles.page, { width }]}>
-                        <Text style={styles.label}>Sex:</Text>
+                        <RequiredLabel text="Sex" />
                         <View style={styles.selectionButtons}>
                             <TouchableOpacity
                                 style={[
@@ -734,7 +708,7 @@ export default function Index() {
                             <Text style={styles.errorText}>{sexError}</Text>
                         ) : null}
 
-                        <Text style={styles.label}>Spayed/Castrated:</Text>
+                        <RequiredLabel text="Spayed/Castrated" />
                         <View style={styles.selectionButtons}>
                             <TouchableOpacity
                                 style={[
@@ -781,7 +755,7 @@ export default function Index() {
                             </Text>
                         ) : null}
 
-                        <Text style={styles.label}>Microchip:</Text>
+                        <RequiredLabel text="Microchip" />
                         <View style={styles.selectionButtons}>
                             <TouchableOpacity
                                 style={[
@@ -826,10 +800,12 @@ export default function Index() {
                                 {microchipError}
                             </Text>
                         ) : null}
-
-                        <Text style={styles.label}>
-                            Initials (Agree to Terms):
-                        </Text>
+                    </View>
+                );
+            case 3:
+                return (
+                    <View style={[styles.page, { width }]}>
+                        <RequiredLabel text="Initials (Agree to Terms)" />
                         <Text style={styles.terms}>
                             All fees are due and payable prior to the release of
                             the patient. Upon your request, we can provide you
@@ -937,21 +913,22 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '100%',
-        height: 40,
+        height: 60,
         borderColor: 'gray',
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 15,
         paddingLeft: 10,
         fontFamily: 'Montserrat_400Regular',
+        fontSize: 23,
     },
     terms: {
-        fontSize: 12,
+        fontSize: 25,
         fontFamily: 'Montserrat_400Regular',
         paddingBottom: 10,
     },
     label: {
-        fontSize: 16,
+        fontSize: 25,
         marginLeft: 2,
         marginBottom: 5,
         fontFamily: 'Montserrat_700Bold',
@@ -1031,7 +1008,7 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        fontSize: 12,
+        fontSize: 20,
         marginTop: -10,
         marginBottom: 10,
         fontFamily: 'Montserrat_400Regular',
@@ -1042,6 +1019,8 @@ const styles = StyleSheet.create({
     dateButtonText: {
         color: '#000',
         fontFamily: 'Montserrat_400Regular',
+        fontSize: 23,
+        paddingLeft: 10,
     },
     textInput: {
         borderWidth: 1,
@@ -1057,5 +1036,32 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: '95%',
+    },
+    required: {
+        color: 'red',
+        fontSize: 25,
+    },
+    inputGroup: {
+        marginBottom: 25, // Spacing between form elements
+        width: '100%',
+    },
+    placesAutocompleteContainer: {
+        marginBottom: 15,
+    },
+    placesAutocompleteInput: {
+        height: 60,
+        fontSize: 23,
+        fontFamily: 'Montserrat_400Regular',
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        marginBottom: 15,
+        height: 60,
+        justifyContent: 'center',
     },
 });

@@ -36,6 +36,10 @@ export default {
             router: {
                 origin: false,
             },
+            extra: {
+                googlePlacesApiKey:
+                    process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+            },
             eas: {
                 projectId: '58810248-3b21-4e46-b000-cd0ef968c56e',
             },

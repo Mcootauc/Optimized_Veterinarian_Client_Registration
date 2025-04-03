@@ -6,4 +6,5 @@ node_modules
 expo-env.d.ts
 .env*.local
 .env
+android/
 # @end expo-cli

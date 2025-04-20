@@ -33,7 +33,9 @@ const containsEmoji = (text: string) => {
 const containsOnlyLettersAndSpaces = (text: string) => {
     return /^[A-Za-z\s]+$/.test(text);
 };
-
+const containsOnlyNumbers = (text: string) => {
+    return /^\d+$/.test(text);
+};
 const isValidAddress = (text: string) => {
     return /^[A-Za-z0-9\s\-\.,#]+$/.test(text);
 };
@@ -68,6 +70,12 @@ export default function Index() {
     const [spayedOrNeutered, setSpayedOrNeutered] = useState('');
     const [microchip, setMicrochip] = useState('');
     const [initials, setInitials] = useState('');
+
+    // Add state to track if address field is focused
+    const [isAddressFocused, setIsAddressFocused] = useState(false);
+
+    // Add state to track if any text input is focused
+    const [isInputFocused, setIsInputFocused] = useState(false);
 
     // Navigation state for multi-page form (pages: 0 to 3)
     const [currentPage, setCurrentPage] = useState(0);
@@ -233,9 +241,18 @@ export default function Index() {
             isValid = false;
         }
 
-        // Microchip validation
-        if (!microchip) {
-            setMicrochipError('Please select yes or no');
+        if (microchip && !containsOnlyNumbers(microchip)) {
+            setMicrochipError('Microchip number can only contain numbers');
+            isValid = false;
+        } else if (
+            microchip &&
+            microchip.length !== 9 &&
+            microchip.length !== 10 &&
+            microchip.length !== 15
+        ) {
+            setMicrochipError(
+                'Typical microchip numbers are 9, 10, or 15 characters long.'
+            );
             isValid = false;
         }
 
@@ -315,10 +332,6 @@ export default function Index() {
         </Text>
     );
 
-    // put
-    const putComponentsInContainer = (components: React.ReactNode) => {
-        return <>{components}</>;
-    };
     // Add a ref to the GooglePlacesAutocomplete component
     const googlePlacesRef = useRef<GooglePlacesAutocompleteRef | null>(null);
 
@@ -412,82 +425,94 @@ export default function Index() {
                             styles.page,
                             {
                                 width,
-                                marginBottom: 170,
+                                marginBottom: 50,
                             },
                         ]}
                     >
-                        <View>
-                            <RequiredLabel text="Full Name" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    ownerNameError ? styles.inputError : null,
-                                ]}
-                                placeholder="Owner's First and Last Name"
-                                value={ownerName}
-                                onChangeText={(text) => {
-                                    setOwnerName(text);
-                                    setOwnerNameError('');
-                                }}
-                            />
+                        {!isAddressFocused && (
+                            <View>
+                                <RequiredLabel text="Full Name" />
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        ownerNameError
+                                            ? styles.inputError
+                                            : null,
+                                    ]}
+                                    placeholder="Owner's First and Last Name"
+                                    value={ownerName}
+                                    onChangeText={(text) => {
+                                        setOwnerName(text);
+                                        setOwnerNameError('');
+                                    }}
+                                />
 
-                            {ownerNameError ? (
-                                <Text style={styles.errorText}>
-                                    {ownerNameError}
-                                </Text>
-                            ) : null}
-                        </View>
+                                {ownerNameError ? (
+                                    <Text style={styles.errorText}>
+                                        {ownerNameError}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        )}
 
-                        <View>
-                            <RequiredLabel text="Email" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    emailError ? styles.inputError : null,
-                                ]}
-                                placeholder="E-mail Address"
-                                value={email}
-                                onChangeText={(text) => {
-                                    setEmail(text);
-                                    setEmailError('');
-                                }}
-                            />
-                            {emailError ? (
-                                <Text style={styles.errorText}>
-                                    {emailError}
-                                </Text>
-                            ) : null}
-                        </View>
+                        {!isAddressFocused && (
+                            <View>
+                                <RequiredLabel text="Email" />
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        emailError ? styles.inputError : null,
+                                    ]}
+                                    placeholder="E-mail Address"
+                                    value={email}
+                                    onChangeText={(text) => {
+                                        setEmail(text);
+                                        setEmailError('');
+                                    }}
+                                />
+                                {emailError ? (
+                                    <Text style={styles.errorText}>
+                                        {emailError}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        )}
 
-                        <View>
-                            <RequiredLabel text="Number" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    phoneError ? styles.inputError : null,
-                                ]}
-                                placeholder="Cell Phone #"
-                                value={cellPhone}
-                                onChangeText={(text) => {
-                                    setCellPhone(text);
-                                    setPhoneError('');
-                                }}
-                            />
-                            {phoneError ? (
-                                <Text style={styles.errorText}>
-                                    {phoneError}
-                                </Text>
-                            ) : null}
-                        </View>
-                        <View>
+                        {!isAddressFocused && (
+                            <View>
+                                <RequiredLabel text="Number" />
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        phoneError ? styles.inputError : null,
+                                    ]}
+                                    placeholder="Cell Phone #"
+                                    value={cellPhone}
+                                    onChangeText={(text) => {
+                                        setCellPhone(text);
+                                        setPhoneError('');
+                                    }}
+                                />
+                                {phoneError ? (
+                                    <Text style={styles.errorText}>
+                                        {phoneError}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        )}
+
+                        <View
+                            style={{ marginBottom: isAddressFocused ? 100 : 0 }}
+                        >
                             <RequiredLabel text="Address" />
                             <GooglePlacesAutocomplete
                                 ref={googlePlacesRef}
                                 fetchDetails={true}
-                                listViewDisplayed="auto"
-                                debounce={20}
+                                minLength={1}
+                                debounce={120}
                                 placeholder="Search for address"
                                 enablePoweredByContainer={false}
+                                disableScroll={true}
                                 onFail={(error) =>
                                     console.error('Google Places error:', error)
                                 }
@@ -502,15 +527,22 @@ export default function Index() {
                                     )
                                 }
                                 timeout={20000}
-                                // Set the search active state when focused
                                 textInputProps={{
                                     placeholderTextColor: 'gray',
-                                    // onFocus: () => setIsAddressSearchActive(true),
-                                    // onBlur: () => setIsAddressSearchActive(false),
-                                    returnKeyType: 'search', // Add this for better keyboard behavior
+                                    returnKeyType: 'search',
+                                    blurOnSubmit: false,
+                                    autoCorrect: false,
+                                    autoCapitalize: 'none',
+                                    onFocus: () => {
+                                        setIsAddressFocused(true);
+                                        setTimeout(() => {}, 200);
+                                    },
+                                    onBlur: () => {
+                                        setIsAddressFocused(false);
+                                    },
                                 }}
-                                keyboardShouldPersistTaps="handled" // Ensures touch events are handled
-                                // Clear button
+                                listViewDisplayed={true}
+                                keyboardShouldPersistTaps="handled"
                                 renderRightButton={() => (
                                     <TouchableOpacity
                                         style={styles.clearButton}
@@ -533,7 +565,6 @@ export default function Index() {
                                 )}
                                 styles={{
                                     container: {
-                                        marginBottom: 15,
                                         zIndex: 1,
                                     },
                                     textInput: {
@@ -618,6 +649,11 @@ export default function Index() {
                                     // Add this line to hide the suggestions after selection
                                     // setIsAddressSearchActive(false);
                                 }}
+                                nearbyPlacesAPI="GooglePlacesSearch"
+                                filterReverseGeocodingByTypes={[
+                                    'locality',
+                                    'administrative_area_level_1',
+                                ]}
                             />
                             {addressError ? (
                                 <Text style={styles.errorTextAddress}>
@@ -881,47 +917,21 @@ export default function Index() {
                         </View>
 
                         <View>
-                            <RequiredLabel text="Microchip" />
-                            <View style={styles.selectionButtons}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.optionButton,
-                                        microchip === 'Yes' &&
-                                            styles.selectedOption,
-                                    ]}
-                                    onPress={() => setMicrochip('Yes')}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.optionText,
-                                            microchip === 'Yes'
-                                                ? styles.selectedText
-                                                : styles.unselectedText,
-                                        ]}
-                                    >
-                                        Yes
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.optionButton,
-                                        microchip === 'No' &&
-                                            styles.selectedOption,
-                                    ]}
-                                    onPress={() => setMicrochip('No')}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.optionText,
-                                            microchip === 'No'
-                                                ? styles.selectedText
-                                                : styles.unselectedText,
-                                        ]}
-                                    >
-                                        No
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            <Text style={styles.label}>
+                                Microchip (optional)
+                            </Text>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    microchipError ? styles.inputError : null,
+                                ]}
+                                placeholder="Microchip Number"
+                                value={microchip}
+                                onChangeText={(text) => {
+                                    setMicrochip(text);
+                                    setMicrochipError('');
+                                }}
+                            />
                             {microchipError ? (
                                 <Text style={styles.errorText}>
                                     {microchipError}
@@ -985,6 +995,7 @@ export default function Index() {
                 pagingEnabled={true}
                 ref={scrollViewRef}
                 showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
             >
                 {renderPageContent(0)}
                 {renderPageContent(1)}
@@ -1151,7 +1162,7 @@ const styles = StyleSheet.create({
     errorTextAddress: {
         color: 'red',
         fontSize: 20,
-        marginTop: 30,
+        marginTop: 50,
         fontFamily: 'Montserrat_400Regular',
     },
     dateButton: {
@@ -1207,5 +1218,19 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 14,
         fontFamily: 'Montserrat_400Regular',
+    },
+    addressFocusedMessage: {
+        backgroundColor: '#f0f8ff',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#007BFF',
+    },
+    addressFocusedText: {
+        color: '#007BFF',
+        fontSize: 16,
+        fontFamily: 'Montserrat_400Regular',
+        textAlign: 'center',
     },
 });

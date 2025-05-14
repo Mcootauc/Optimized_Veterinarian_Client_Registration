@@ -950,8 +950,7 @@ export default function Index() {
                                 release of the patient. Upon your request, we
                                 can provide you with a written estimate of fees
                                 for any treatments, emergency care, surgery, or
-                                hospitalization services to be performed. to be
-                                performed.
+                                hospitalization services to be performed.
                             </Text>
                             <Text style={styles.terms}>
                                 You understand and approve all necessary

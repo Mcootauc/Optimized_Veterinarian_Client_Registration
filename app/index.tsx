@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+import Page1 from './NewClientPages/Page1';
+import { Colors } from '../constants/Colors';
 import {
     View,
     TextInput,
@@ -9,6 +11,7 @@ import {
     TouchableOpacity,
     useWindowDimensions,
 } from 'react-native';
+import Divider from '../components/Divider';
 import {
     useFonts,
     Montserrat_400Regular,
@@ -55,7 +58,8 @@ const isValidEmail = (text: string) => {
 
 export default function Index() {
     // Form fields
-    const [ownerName, setOwnerName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [homeAddress, setHomeAddress] = useState('');
     const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
@@ -83,7 +87,8 @@ export default function Index() {
     const { width } = useWindowDimensions(); // Get the width of the screen for the transition animation
 
     // Add error states for page 1
-    const [ownerNameError, setOwnerNameError] = useState('');
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
     const [addressError, setAddressError] = useState('');
     // Page 2 errors
     const [phoneError, setPhoneError] = useState('');
@@ -123,20 +128,36 @@ export default function Index() {
         let isValid = true;
 
         // Reset all error states
-        setOwnerNameError('');
+        setFirstNameError('');
+        setLastNameError('');
         setEmailError('');
         setPhoneError('');
         setAddressError('');
 
-        // Owner Name validation
-        if (!ownerName.trim()) {
-            setOwnerNameError('Name is required');
+        // First Name validation
+        if (!firstName.trim()) {
+            // If the first name is empty, set the error message
+            setFirstNameError('First name is required');
             isValid = false;
-        } else if (containsEmoji(ownerName)) {
-            setOwnerNameError('Name cannot contain emojis');
+        } else if (containsEmoji(firstName)) {
+            // If the first name contains an emoji, set the error message
+            setFirstNameError('First name cannot contain emojis');
             isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(ownerName)) {
-            setOwnerNameError('Name can only contain letters');
+        } else if (!containsOnlyLettersAndSpaces(firstName)) {
+            // If the first name contains only letters and spaces, set the error message
+            setFirstNameError('First name can only contain letters');
+            isValid = false;
+        }
+
+        // Last Name validation
+        if (!lastName.trim()) {
+            setLastNameError('Last name is required');
+            isValid = false;
+        } else if (containsEmoji(lastName)) {
+            setLastNameError('Last name cannot contain emojis');
+            isValid = false;
+        } else if (!containsOnlyLettersAndSpaces(lastName)) {
+            setLastNameError('Last name can only contain letters');
             isValid = false;
         }
 
@@ -346,6 +367,8 @@ export default function Index() {
             timeZone: 'America/Los_Angeles',
         });
 
+        const ownerName = `${firstName} ${lastName}`;
+
         const formData = {
             timestamp,
             ownerName,
@@ -371,7 +394,8 @@ export default function Index() {
             Alert.alert('Success', responseMessage);
 
             // Reset form fields
-            setOwnerName('');
+            setFirstName('');
+            setLastName('');
             setHomeAddress('');
             setStreet('');
             setCity('');
@@ -410,6 +434,16 @@ export default function Index() {
         return null;
     }
 
+    const page1HasError = !!(
+        firstNameError ||
+        lastNameError ||
+        emailError ||
+        phoneError ||
+        addressError
+    );
+    // const page2Error = petNameError || speciesError || breedError || birthDateError;
+    // const page3Error = colorError || sexError || spayedNeuteredError || microchipError;
+
     // Render navigation buttons:
     // "Back" always on the left (if not on first page)
     // On pages 0-2, "Next" is on the right.
@@ -420,246 +454,46 @@ export default function Index() {
         switch (page) {
             case 0:
                 return (
-                    <View
-                        style={[
-                            styles.page,
-                            {
-                                width,
-                                marginBottom: 50,
-                            },
-                        ]}
-                    >
-                        {!isAddressFocused && (
-                            <View>
-                                <RequiredLabel text="Full Name" />
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        ownerNameError
-                                            ? styles.inputError
-                                            : null,
-                                    ]}
-                                    placeholder="Owner's First and Last Name"
-                                    value={ownerName}
-                                    onChangeText={(text) => {
-                                        setOwnerName(text);
-                                        setOwnerNameError('');
-                                    }}
-                                />
-
-                                {ownerNameError ? (
-                                    <Text style={styles.errorText}>
-                                        {ownerNameError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                        )}
-
-                        {!isAddressFocused && (
-                            <View>
-                                <RequiredLabel text="Email" />
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        emailError ? styles.inputError : null,
-                                    ]}
-                                    placeholder="E-mail Address"
-                                    value={email}
-                                    onChangeText={(text) => {
-                                        setEmail(text);
-                                        setEmailError('');
-                                    }}
-                                />
-                                {emailError ? (
-                                    <Text style={styles.errorText}>
-                                        {emailError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                        )}
-
-                        {!isAddressFocused && (
-                            <View>
-                                <RequiredLabel text="Number" />
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        phoneError ? styles.inputError : null,
-                                    ]}
-                                    placeholder="Cell Phone #"
-                                    value={cellPhone}
-                                    onChangeText={(text) => {
-                                        setCellPhone(text);
-                                        setPhoneError('');
-                                    }}
-                                />
-                                {phoneError ? (
-                                    <Text style={styles.errorText}>
-                                        {phoneError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                        )}
-
+                    <View style={styles.cardContainer}>
                         <View
-                            style={{ marginBottom: isAddressFocused ? 100 : 0 }}
+                            style={[
+                                styles.card,
+                                page1HasError && styles.cardError,
+                            ]}
                         >
-                            <RequiredLabel text="Address" />
-                            <GooglePlacesAutocomplete
-                                ref={googlePlacesRef}
-                                fetchDetails={true}
-                                minLength={1}
-                                debounce={120}
-                                placeholder="Search for address"
-                                enablePoweredByContainer={false}
-                                disableScroll={true}
-                                onFail={(error) =>
-                                    console.error('Google Places error:', error)
-                                }
-                                onNotFound={() =>
-                                    console.log(
-                                        'Google Places: no results found'
-                                    )
-                                }
-                                onTimeout={() =>
-                                    console.log(
-                                        'Google Places: request timed out'
-                                    )
-                                }
-                                timeout={20000}
-                                textInputProps={{
-                                    placeholderTextColor: 'gray',
-                                    returnKeyType: 'search',
-                                    blurOnSubmit: false,
-                                    autoCorrect: false,
-                                    autoCapitalize: 'none',
-                                    onFocus: () => {
-                                        setIsAddressFocused(true);
-                                        setTimeout(() => {}, 200);
-                                    },
-                                    onBlur: () => {
-                                        setIsAddressFocused(false);
-                                    },
-                                }}
-                                listViewDisplayed={true}
-                                keyboardShouldPersistTaps="handled"
-                                renderRightButton={() => (
-                                    <TouchableOpacity
-                                        style={styles.clearButton}
-                                        onPress={() => {
-                                            if (googlePlacesRef.current) {
-                                                googlePlacesRef.current.clear();
-                                                setHomeAddress('');
-                                                setStreet('');
-                                                setCity('');
-                                                setState('');
-                                                setZipCode('');
-                                                setAddressError('');
-                                            }
-                                        }}
-                                    >
-                                        <Text style={styles.clearButtonText}>
-                                            Clear
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-                                styles={{
-                                    container: {
-                                        zIndex: 1,
-                                    },
-                                    textInput: {
-                                        height: 40,
-                                        fontSize: 20,
-                                        fontFamily: 'Montserrat_400Regular',
-                                        borderWidth: 1,
-                                        borderColor: addressError
-                                            ? 'red'
-                                            : 'gray',
-                                        borderRadius: 5,
-                                        paddingLeft: 10,
-                                        paddingRight: 55, // Add padding for clear button
-                                        backgroundColor: '#FAFAFA',
-                                    },
-                                    listView: {
-                                        borderWidth: 1,
-                                        borderColor: 'gray',
-                                        backgroundColor: '#FAFAFA',
-                                        margin: 0,
-                                        fontSize: 20,
-                                        maxHeight: 304,
-                                        position: 'absolute', // Make the list view absolute
-                                        width: '100%',
-                                        top: 42, // Position it below the input (height of input + margin)
-                                        zIndex: 1000, // Ensure it's above other content
-                                    },
-                                    row: {
-                                        padding: 10,
-                                        height: 40,
-                                        fontSize: 16,
-                                        fontFamily: 'Montserrat_400Regular',
-                                    },
-                                    description: {
-                                        fontFamily: 'Montserrat_400Regular',
-                                        fontSize: 16,
-                                    },
-                                }}
-                                query={{
-                                    key: process.env
-                                        .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
-                                    language: 'en',
-                                }}
-                                onPress={(data, details = null) => {
-                                    console.log('Started!');
-                                    const components =
-                                        details?.address_components;
-                                    const getComponent = (type: string) =>
-                                        components?.find((c) =>
-                                            c.types.includes(type as PlaceType)
-                                        )?.long_name ?? '';
-                                    const streetNumber =
-                                        getComponent('street_number');
-                                    const route = getComponent('route');
-
-                                    const fullStreet =
-                                        `${streetNumber} ${route}`.trim();
-                                    setStreet(fullStreet); // 👈 sets your street state
-                                    setHomeAddress(data.description);
-                                    setCity(getComponent('locality'));
-                                    setState(
-                                        getComponent(
-                                            'administrative_area_level_1'
-                                        )
-                                    );
-                                    setZipCode(getComponent('postal_code'));
-                                    console.log('FULL STREET', fullStreet);
-                                    console.log(
-                                        'CITY',
-                                        getComponent('locality')
-                                    );
-                                    console.log(
-                                        'STATE',
-                                        getComponent(
-                                            'administrative_area_level_1'
-                                        )
-                                    );
-                                    console.log(
-                                        'ZIP CODE',
-                                        getComponent('postal_code')
-                                    );
-                                    // Add this line to hide the suggestions after selection
-                                    // setIsAddressSearchActive(false);
-                                }}
-                                nearbyPlacesAPI="GooglePlacesSearch"
-                                filterReverseGeocodingByTypes={[
-                                    'locality',
-                                    'administrative_area_level_1',
-                                ]}
+                            <Page1
+                                width={width - 60} // Adjust width to account for card padding
+                                firstName={firstName}
+                                setFirstName={setFirstName}
+                                firstNameError={firstNameError}
+                                setFirstNameError={setFirstNameError}
+                                lastName={lastName}
+                                setLastName={setLastName}
+                                lastNameError={lastNameError}
+                                setLastNameError={setLastNameError}
+                                email={email}
+                                setEmail={setEmail}
+                                emailError={emailError}
+                                setEmailError={setEmailError}
+                                cellPhone={cellPhone}
+                                setCellPhone={setCellPhone}
+                                phoneError={phoneError}
+                                setPhoneError={setPhoneError}
+                                homeAddress={homeAddress}
+                                setHomeAddress={setHomeAddress}
+                                street={street}
+                                setStreet={setStreet}
+                                city={city}
+                                setCity={setCity}
+                                state={state}
+                                setState={setState}
+                                zipCode={zipCode}
+                                setZipCode={setZipCode}
+                                addressError={addressError}
+                                setAddressError={setAddressError}
+                                isAddressFocused={isAddressFocused}
+                                setIsAddressFocused={setIsAddressFocused}
                             />
-                            {addressError ? (
-                                <Text style={styles.errorTextAddress}>
-                                    {addressError}
-                                </Text>
-                            ) : null}
                         </View>
                     </View>
                 );
@@ -987,7 +821,7 @@ export default function Index() {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
+        <View style={{ flex: 1, backgroundColor: '#FEFEFE' }}>
             <ScrollView
                 horizontal
                 scrollEnabled={false}
@@ -1047,25 +881,24 @@ const styles = StyleSheet.create({
         padding: 20,
         marginTop: 30,
         justifyContent: 'center',
-        gap: 10,
     },
     container: {
         flexGrow: 1,
         padding: 20,
         alignItems: 'stretch',
         justifyContent: 'center',
-        backgroundColor: '#FAFAFA', // orhsl(20, 44.80%, 82.90%)46.30%, 70.80%)
+        backgroundColor: '#FEFEFE', // orhsl(20, 44.80%, 82.90%)46.30%, 70.80%)
     },
     input: {
         width: '100%',
-        height: 40,
-        borderColor: 'gray',
+        height: 70,
+        borderColor: '#B8BDC6',
         borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 15,
-        paddingLeft: 10,
+        borderRadius: 6,
+        marginBottom: 20,
+        paddingLeft: 18,
         fontFamily: 'Montserrat_400Regular',
-        fontSize: 20,
+        fontSize: 22,
     },
     terms: {
         fontSize: 20,
@@ -1088,7 +921,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderColor: 'gray',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 6,
         marginHorizontal: 5,
     },
     selectedOption: {
@@ -1128,7 +961,7 @@ const styles = StyleSheet.create({
     navButton: {
         padding: 10,
         backgroundColor: '#007BFF', // or any other background color
-        borderRadius: 5,
+        borderRadius: 6,
         width: 100,
         alignItems: 'center',
     },
@@ -1158,14 +991,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontFamily: 'Montserrat_400Regular',
     },
-    errorTextAddress: {
-        color: 'red',
-        fontSize: 20,
-        marginTop: 50,
-        fontFamily: 'Montserrat_400Regular',
-    },
     dateButton: {
         justifyContent: 'center',
+        alignItems: 'flex-start',
+        paddingTop: 0,
     },
     dateButtonText: {
         color: '#000',
@@ -1176,8 +1005,8 @@ const styles = StyleSheet.create({
     textInput: {
         borderWidth: 1,
         borderColor: '#ccc',
-        height: 40,
-        borderRadius: 25,
+        height: 70,
+        borderRadius: 20,
         paddingLeft: 25,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
@@ -1199,37 +1028,34 @@ const styles = StyleSheet.create({
     pickerContainer: {
         borderWidth: 1,
         borderColor: 'gray',
-        borderRadius: 5,
+        borderRadius: 6,
         marginBottom: 15,
-        height: 60,
+        height: 70,
         justifyContent: 'center',
     },
-    clearButton: {
-        position: 'absolute',
-        right: 10,
-        top: 7,
-        padding: 3,
-        backgroundColor: 'gray',
-        borderRadius: 5,
-        zIndex: 2,
+    cardContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 25,
     },
-    clearButtonText: {
-        color: 'black',
-        fontSize: 14,
-        fontFamily: 'Montserrat_400Regular',
-    },
-    addressFocusedMessage: {
-        backgroundColor: '#f0f8ff',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
+    card: {
+        width: '100%',
+        backgroundColor: '#FEFEFE',
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#007BFF',
+        borderColor: '#76767633',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 1,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        paddingBottom: 25,
+        marginVertical: 20,
     },
-    addressFocusedText: {
-        color: '#007BFF',
-        fontSize: 16,
-        fontFamily: 'Montserrat_400Regular',
-        textAlign: 'center',
+    cardError: {
+        borderColor: Colors.red,
     },
 });

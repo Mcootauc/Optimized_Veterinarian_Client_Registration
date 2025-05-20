@@ -8,18 +8,19 @@ export default function RootLayout() {
                 name="index"
                 options={{
                     title: 'Valley Veterinary Hospital',
-                    headerStyle: { backgroundColor: '#224d94' },
-                    headerTintColor: '#fff',
+                    headerStyle: { backgroundColor: '#03045E' },
+                    headerTintColor: '#FEFEFE',
                     headerTitleAlign: 'center', // still keep this
                     headerTitle: () => (
                         <Text
                             style={{
                                 fontFamily: 'Montserrat_700Bold',
-                                color: '#fff',
-                                fontSize: 25,
+                                color: '#FEFEFE',
+                                fontSize: 48,
                                 textAlign: 'center',
                                 width: '100%',
-                                paddingBottom: 10,
+                                paddingBottom: 30,
+                                paddingTop: 20,
                                 margin: 0,
                             }}
                         >

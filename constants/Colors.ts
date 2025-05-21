@@ -10,4 +10,5 @@ export const Colors = {
     steelBlue: '#56A0AE',
     black: '#1E1E1E',
     white: '#FEFEFE',
+    borderColor: '#B8BDC6',
 };

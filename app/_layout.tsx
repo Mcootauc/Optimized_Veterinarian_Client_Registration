@@ -14,7 +14,7 @@ export default function RootLayout() {
                     headerTitle: () => (
                         <Text
                             style={{
-                                fontFamily: 'Montserrat_700Bold',
+                                fontFamily: 'Inter_700Bold',
                                 color: '#FEFEFE',
                                 fontSize: 48,
                                 textAlign: 'center',

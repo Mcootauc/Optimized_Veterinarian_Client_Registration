@@ -78,9 +78,6 @@ export default function Index() {
     // Add state to track if address field is focused
     const [isAddressFocused, setIsAddressFocused] = useState(false);
 
-    // Add state to track if any text input is focused
-    const [isInputFocused, setIsInputFocused] = useState(false);
-
     // Navigation state for multi-page form (pages: 0 to 3)
     const [currentPage, setCurrentPage] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
@@ -454,48 +451,66 @@ export default function Index() {
         switch (page) {
             case 0:
                 return (
-                    <View style={styles.cardContainer}>
-                        <View
-                            style={[
-                                styles.card,
-                                page1HasError && styles.cardError,
-                            ]}
-                        >
-                            <Page1
-                                width={width - 60} // Adjust width to account for card padding
-                                firstName={firstName}
-                                setFirstName={setFirstName}
-                                firstNameError={firstNameError}
-                                setFirstNameError={setFirstNameError}
-                                lastName={lastName}
-                                setLastName={setLastName}
-                                lastNameError={lastNameError}
-                                setLastNameError={setLastNameError}
-                                email={email}
-                                setEmail={setEmail}
-                                emailError={emailError}
-                                setEmailError={setEmailError}
-                                cellPhone={cellPhone}
-                                setCellPhone={setCellPhone}
-                                phoneError={phoneError}
-                                setPhoneError={setPhoneError}
-                                homeAddress={homeAddress}
-                                setHomeAddress={setHomeAddress}
-                                street={street}
-                                setStreet={setStreet}
-                                city={city}
-                                setCity={setCity}
-                                state={state}
-                                setState={setState}
-                                zipCode={zipCode}
-                                setZipCode={setZipCode}
-                                addressError={addressError}
-                                setAddressError={setAddressError}
-                                isAddressFocused={isAddressFocused}
-                                setIsAddressFocused={setIsAddressFocused}
-                            />
-                        </View>
-                    </View>
+                    <Page1
+                        width={width - 70} // Adjust width to account for card padding
+                        page1HasError={page1HasError}
+                        firstName={firstName}
+                        setFirstName={setFirstName}
+                        firstNameError={firstNameError}
+                        setFirstNameError={setFirstNameError}
+                        lastName={lastName}
+                        setLastName={setLastName}
+                        lastNameError={lastNameError}
+                        setLastNameError={setLastNameError}
+                        email={email}
+                        setEmail={setEmail}
+                        emailError={emailError}
+                        setEmailError={setEmailError}
+                        cellPhone={cellPhone}
+                        setCellPhone={setCellPhone}
+                        phoneError={phoneError}
+                        setPhoneError={setPhoneError}
+                        homeAddress={homeAddress}
+                        setHomeAddress={setHomeAddress}
+                        street={street}
+                        setStreet={setStreet}
+                        city={city}
+                        setCity={setCity}
+                        state={state}
+                        setState={setState}
+                        zipCode={zipCode}
+                        setZipCode={setZipCode}
+                        addressError={addressError}
+                        setAddressError={setAddressError}
+                        petName={petName}
+                        setPetName={setPetName}
+                        petNameError={petNameError}
+                        setPetNameError={setPetNameError}
+                        color={color}
+                        setColor={setColor}
+                        colorError={colorError}
+                        setColorError={setColorError}
+                        selectSpecies={selectSpecies}
+                        setSelectSpecies={setSelectSpecies}
+                        speciesError={speciesError}
+                        setSpeciesError={setSpeciesError}
+                        breed={breed}
+                        setBreed={setBreed}
+                        breedError={breedError}
+                        setBreedError={setBreedError}
+                        birthDate={birthDate}
+                        setBirthDate={setBirthDate}
+                        birthDateError={birthDateError}
+                        setBirthDateError={setBirthDateError}
+                        showDatePicker={showDatePicker}
+                        setShowDatePicker={setShowDatePicker}
+                        sex={sex}
+                        setSex={setSex}
+                        sexError={sexError}
+                        setSexError={setSexError}
+                        isAddressFocused={isAddressFocused}
+                        setIsAddressFocused={setIsAddressFocused}
+                    />
                 );
             case 1:
                 return (

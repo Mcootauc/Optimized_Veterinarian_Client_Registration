@@ -1,12 +1,16 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import Divider from '../../components/Divider';
 import { Colors } from '../../constants/Colors';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useRouter, Link } from 'expo-router';
+
 import {
     View,
     Text,
     StyleSheet,
     TextInput,
     TouchableOpacity,
+    Button,
 } from 'react-native';
 import {
     GooglePlacesAutocomplete,
@@ -144,6 +148,7 @@ export default function Page1({
     setSexError: (sexError: string) => void;
 }) {
     const googlePlacesRef = useRef<GooglePlacesAutocompleteRef | null>(null);
+    const router = useRouter();
 
     const [fontsLoaded] = useFonts({
         Inter_400Regular,
@@ -151,38 +156,43 @@ export default function Page1({
         Inter_600SemiBold,
         Inter_700Bold,
     });
+
+    // Memoize these functions to maintain consistent hook order
+    const formatDate = React.useMemo(() => {
+        return (date: Date | null) => {
+            if (!date) return '';
+            return date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+            });
+        };
+    }, []);
+
+    // Memoize the date change handler
+    const onDateChange = React.useMemo(() => {
+        return (event: any, selectedDate?: Date) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+                setBirthDate(selectedDate);
+                setBirthDateError('');
+            }
+        };
+    }, [setBirthDate, setShowDatePicker, setBirthDateError]);
+
     if (!fontsLoaded) {
         return null;
     }
 
-    // Add this function to format the date for display
-    const formatDate = (date: Date | null) => {
-        if (!date) return '';
-        return date.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    };
-
-    // Add date change handler
-    const onDateChange = (event: any, selectedDate?: Date) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            setBirthDate(selectedDate);
-            setBirthDateError('');
-        }
-    };
-
     return (
-        <View>
-            <CardContainer hasError={page1HasError}>
+        <View style={{ marginTop: 30 }}>
+            <CardContainer hasError={page1HasError} paddingBottom={25}>
                 <View
                     style={[
                         styles.page,
                         {
                             width,
-                            marginBottom: 25,
+                            marginBottom: 35,
                         },
                     ]}
                 >
@@ -200,6 +210,9 @@ export default function Page1({
                         width={2}
                         orientation="horizontal"
                     />
+                    <Link href="/homepage" style={styles.linkText}>
+                        Go to Home
+                    </Link>
                     {!isAddressFocused && (
                         <View
                             style={{
@@ -222,7 +235,6 @@ export default function Page1({
                                         setFirstNameError('');
                                     }}
                                 />
-
                                 {firstNameError ? (
                                     <Text style={styles.errorText}>
                                         {firstNameError}
@@ -253,7 +265,6 @@ export default function Page1({
                             </View>
                         </View>
                     )}
-
                     {!isAddressFocused && (
                         <View>
                             <TextInput
@@ -275,7 +286,6 @@ export default function Page1({
                             ) : null}
                         </View>
                     )}
-
                     {!isAddressFocused && (
                         <View>
                             <TextInput
@@ -297,7 +307,6 @@ export default function Page1({
                             ) : null}
                         </View>
                     )}
-
                     <View
                         style={{
                             marginBottom: isAddressFocused
@@ -456,13 +465,17 @@ export default function Page1({
                     </View>
                 </View>
             </CardContainer>
-            <CardContainer hasError={page1HasError}>
+
+            <View style={{ height: 30 }} />
+
+            {/* Pet Details */}
+            <CardContainer hasError={page1HasError} paddingBottom={0}>
                 <View
                     style={[
                         styles.page,
                         {
                             width,
-                            marginBottom: 25,
+                            marginBottom: 0,
                         },
                     ]}
                 >
@@ -480,200 +493,256 @@ export default function Page1({
                         width={2}
                         orientation="horizontal"
                     />
-                    {!isAddressFocused && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                gap: 16,
-                            }}
-                        >
-                            <View style={{ flex: 1 }}>
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        petNameError ? styles.inputError : null,
-                                    ]}
-                                    placeholder="Pet Name"
-                                    value={petName}
-                                    onChangeText={(text) => {
-                                        setPetName(text);
-                                        setPetNameError('');
-                                    }}
-                                />
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            gap: 16,
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    petNameError ? styles.inputError : null,
+                                ]}
+                                placeholder="Pet Name"
+                                value={petName}
+                                onChangeText={(text) => {
+                                    setPetName(text);
+                                    setPetNameError('');
+                                }}
+                            />
 
-                                {petNameError ? (
-                                    <Text style={styles.errorText}>
-                                        {petNameError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        colorError ? styles.inputError : null,
-                                    ]}
-                                    placeholder="Color"
-                                    value={color}
-                                    onChangeText={(text) => {
-                                        setColor(text);
-                                        setColorError('');
-                                    }}
-                                />
-
-                                {colorError ? (
-                                    <Text style={styles.errorText}>
-                                        {colorError}
-                                    </Text>
-                                ) : null}
-                            </View>
+                            {petNameError ? (
+                                <Text style={styles.errorText}>
+                                    {petNameError}
+                                </Text>
+                            ) : null}
                         </View>
-                    )}
+                        <View style={{ flex: 1 }}>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    colorError ? styles.inputError : null,
+                                ]}
+                                placeholder="Color"
+                                value={color}
+                                onChangeText={(text) => {
+                                    setColor(text);
+                                    setColorError('');
+                                }}
+                            />
 
-                    {!isAddressFocused && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                gap: 16,
-                            }}
-                        >
-                            <View style={{ flex: 1 }}>
-                                <View style={styles.pickerContainer}>
-                                    <RNPickerSelect
-                                        style={{
-                                            inputAndroid: {
-                                                fontSize: 22,
-                                                fontFamily: 'Inter_400Regular',
-                                                paddingVertical: 0,
-                                                paddingHorizontal: 0,
-                                                color: 'black',
-                                            },
-                                            inputIOS: {
-                                                fontSize: 22,
-                                                fontFamily: 'Inter_400Regular',
-                                                paddingVertical: 10,
-                                                paddingHorizontal: 10,
-                                                color: 'black',
-                                            },
-                                            placeholder: {
-                                                color: 'gray',
-                                                paddingLeft: 18,
-                                                fontSize: 22,
-                                                fontFamily: 'Inter_400Regular',
-                                            },
-                                            // No need for viewContainer styling when we're wrapping it
-                                        }}
-                                        useNativeAndroidPickerStyle={false} // let us style Android too
-                                        placeholder={{
-                                            label: 'Species',
-                                        }}
-                                        value={selectSpecies}
-                                        onValueChange={(value) => {
-                                            setSelectSpecies(value);
-                                            setSpeciesError('');
-                                        }}
-                                        items={[
-                                            { label: 'Dog', value: 'Dog' },
-                                            { label: 'Cat', value: 'Cat' },
-                                            { label: 'Other', value: 'Other' },
-                                        ]}
-                                    />
-                                </View>
-
-                                {speciesError ? (
-                                    <Text style={styles.errorText}>
-                                        {speciesError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        breedError ? styles.inputError : null,
+                            {colorError ? (
+                                <Text style={styles.errorText}>
+                                    {colorError}
+                                </Text>
+                            ) : null}
+                        </View>
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            gap: 16,
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <View
+                                style={[
+                                    styles.pickerContainer,
+                                    speciesError ? styles.inputError : null,
+                                ]}
+                            >
+                                <RNPickerSelect
+                                    style={{
+                                        inputAndroid: {
+                                            fontSize: 22,
+                                            fontFamily: 'Inter_400Regular',
+                                            paddingVertical: 0,
+                                            paddingHorizontal: 0,
+                                            paddingLeft: 18,
+                                            color: 'black',
+                                        },
+                                        placeholder: {
+                                            color: 'gray',
+                                            paddingLeft: 18,
+                                            fontSize: 22,
+                                            fontFamily: 'Inter_400Regular',
+                                        },
+                                        // No need for viewContainer styling when we're wrapping it
+                                    }}
+                                    useNativeAndroidPickerStyle={false} // let us style Android too
+                                    placeholder={{
+                                        label: 'Species',
+                                    }}
+                                    value={selectSpecies}
+                                    onValueChange={(value) => {
+                                        setSelectSpecies(value);
+                                        setSpeciesError('');
+                                    }}
+                                    items={[
+                                        { label: 'Dog', value: 'Dog' },
+                                        { label: 'Cat', value: 'Cat' },
+                                        { label: 'Other', value: 'Other' },
                                     ]}
-                                    placeholder="Breed"
-                                    value={breed}
-                                    onChangeText={(text) => {
-                                        setBreed(text);
-                                        setBreedError('');
+                                />
+                                <FontAwesome
+                                    name="chevron-down"
+                                    size={24}
+                                    color={Colors.gray}
+                                    style={{
+                                        position: 'absolute',
+                                        right: 20,
+                                        top: 20,
                                     }}
                                 />
-                                {breedError ? (
-                                    <Text style={styles.errorText}>
-                                        {breedError}
-                                    </Text>
-                                ) : null}
                             </View>
+
+                            {speciesError ? (
+                                <Text style={styles.selectErrorText}>
+                                    {speciesError}
+                                </Text>
+                            ) : null}
                         </View>
-                    )}
+                        <View style={{ flex: 1 }}>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    breedError ? styles.inputError : null,
+                                ]}
+                                placeholder="Breed"
+                                value={breed}
+                                onChangeText={(text) => {
+                                    setBreed(text);
+                                    setBreedError('');
+                                }}
+                            />
+                            {breedError ? (
+                                <Text style={styles.errorText}>
+                                    {breedError}
+                                </Text>
+                            ) : null}
+                        </View>
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            gap: 16,
+                            marginBottom: 0,
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.input,
+                                    styles.dateButton,
+                                    birthDateError ? styles.inputError : null,
+                                ]}
+                                onPress={() => setShowDatePicker(true)}
+                            >
+                                <Text style={styles.dateButtonText}>
+                                    {birthDate
+                                        ? formatDate(birthDate)
+                                        : 'Select Birth Date'}
+                                </Text>
+                            </TouchableOpacity>
+                            <FontAwesome
+                                name="chevron-down"
+                                size={24}
+                                color={Colors.gray}
+                                style={{
+                                    position: 'absolute',
+                                    right: 20,
+                                    top: 20,
+                                }}
+                            />
+                            {birthDateError ? (
+                                <Text style={styles.errorText}>
+                                    {birthDateError}
+                                </Text>
+                            ) : null}
 
-                    {!isAddressFocused && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                gap: 16,
-                            }}
-                        >
-                            <View style={{ flex: 1 }}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.input,
-                                        styles.dateButton,
-                                        birthDateError
-                                            ? styles.inputError
-                                            : null,
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={birthDate || new Date()}
+                                    mode="date"
+                                    display="spinner"
+                                    onChange={onDateChange}
+                                    themeVariant="dark"
+                                    maximumDate={new Date()} // Prevents future dates
+                                />
+                            )}
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <View
+                                style={[
+                                    styles.pickerContainer,
+                                    sexError ? styles.inputError : null,
+                                ]}
+                            >
+                                <RNPickerSelect
+                                    style={{
+                                        inputAndroid: {
+                                            fontSize: 22,
+                                            fontFamily: 'Inter_400Regular',
+                                            paddingVertical: 0,
+                                            paddingHorizontal: 0,
+                                            paddingLeft: 18,
+                                            color: 'black',
+                                        },
+                                        placeholder: {
+                                            color: 'gray',
+                                            paddingLeft: 18,
+                                            fontSize: 22,
+                                            fontFamily: 'Inter_400Regular',
+                                        },
+                                        // No need for viewContainer styling when we're wrapping it
+                                    }}
+                                    useNativeAndroidPickerStyle={false} // let us style Android too
+                                    placeholder={{
+                                        label: 'Sex',
+                                    }}
+                                    value={sex}
+                                    onValueChange={(value) => {
+                                        setSex(value);
+                                        setSexError('');
+                                    }}
+                                    items={[
+                                        { label: 'Male', value: 'Male' },
+                                        {
+                                            label: 'Female',
+                                            value: 'Female',
+                                        },
+                                        {
+                                            label: 'Unknown',
+                                            value: 'Unknown',
+                                        },
                                     ]}
-                                    onPress={() => setShowDatePicker(true)}
-                                >
-                                    <Text style={styles.dateButtonText}>
-                                        {birthDate
-                                            ? formatDate(birthDate)
-                                            : 'Select Birth Date'}
-                                    </Text>
-                                </TouchableOpacity>
-                                {birthDateError ? (
-                                    <Text style={styles.errorText}>
-                                        {birthDateError}
-                                    </Text>
-                                ) : null}
-
-                                {showDatePicker && (
-                                    <DateTimePicker
-                                        value={birthDate || new Date()}
-                                        mode="date"
-                                        display="spinner"
-                                        onChange={onDateChange}
-                                        themeVariant="dark"
-                                        maximumDate={new Date()} // Prevents future dates
-                                    />
-                                )}
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <TextInput
-                                    style={[
-                                        styles.input,
-                                        colorError ? styles.inputError : null,
-                                    ]}
-                                    placeholder="Sex"
-                                    value={color}
-                                    onChangeText={(text) => {
-                                        setColor(text);
-                                        setColorError('');
+                                />
+                                <FontAwesome
+                                    name="chevron-down"
+                                    size={24}
+                                    color={Colors.gray}
+                                    style={{
+                                        position: 'absolute',
+                                        right: 20,
+                                        top: 20,
                                     }}
                                 />
-
-                                {colorError ? (
-                                    <Text style={styles.errorText}>
-                                        {colorError}
-                                    </Text>
-                                ) : null}
                             </View>
+
+                            {sexError ? (
+                                <Text style={styles.selectErrorText}>
+                                    {sexError}
+                                </Text>
+                            ) : null}
                         </View>
-                    )}
+                    </View>
                 </View>
             </CardContainer>
-            <View style={[styles.assistanceText, { width: width }]}>
+            <View
+                style={[styles.assistanceText, { width: width, marginTop: 40 }]}
+            >
                 <Text style={styles.assistanceTextBase}>
                     If you have any questions, please ask the{' '}
                 </Text>
@@ -696,6 +765,7 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: 20,
         justifyContent: 'center',
+        marginBottom: 0,
     },
     input: {
         width: '100%',
@@ -716,6 +786,14 @@ const styles = StyleSheet.create({
         color: Colors.red,
         fontSize: 20,
         marginTop: -10,
+        marginLeft: 10,
+        marginBottom: 10,
+        fontFamily: 'Inter_600SemiBold',
+    },
+    selectErrorText: {
+        color: Colors.red,
+        fontSize: 20,
+        marginTop: 10,
         marginLeft: 10,
         marginBottom: 10,
         fontFamily: 'Inter_600SemiBold',
@@ -750,9 +828,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.borderColor,
         borderRadius: 6,
-        marginBottom: 15,
+        marginBottom: 0,
         height: 70,
         justifyContent: 'center',
+        position: 'relative',
     },
     dateButton: {
         justifyContent: 'center',
@@ -760,43 +839,18 @@ const styles = StyleSheet.create({
         paddingTop: 0,
     },
     dateButtonText: {
-        color: '#000',
-        fontFamily: 'Montserrat_400Regular',
-        fontSize: 20,
+        color: Colors.gray,
+        fontFamily: 'Inter_400Regular',
+        fontSize: 22,
         paddingLeft: 0,
-    },
-    cardContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 25,
-    },
-    card: {
-        width: '100%',
-        backgroundColor: '#FEFEFE',
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#76767633',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        paddingBottom: 25,
-        marginVertical: 20,
-    },
-    cardError: {
-        borderColor: Colors.red,
     },
     assistanceText: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignSelf: 'center',
         justifyContent: 'center',
-        marginBottom: 40,
-        marginTop: 10,
+        marginBottom: 0,
+        marginTop: 0,
         paddingHorizontal: 20,
     },
     assistanceTextBase: {
@@ -810,5 +864,11 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter_700Bold',
         color: Colors.darkBlue,
         textAlign: 'center',
+    },
+    linkText: {
+        color: Colors.darkBlue,
+        fontSize: 16,
+        fontFamily: 'Inter_400Regular',
+        marginBottom: 10,
     },
 });

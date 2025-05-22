@@ -11,21 +11,13 @@ import {
     TouchableOpacity,
     useWindowDimensions,
 } from 'react-native';
-import Divider from '../components/Divider';
 import {
+    Inter_400Regular,
+    Inter_700Bold,
     useFonts,
-    Montserrat_400Regular,
-    Montserrat_700Bold,
-} from '@expo-google-fonts/montserrat';
+} from '@expo-google-fonts/inter';
 import { submitFormData } from './Services/SupabaseService';
-import DateTimePicker from '@react-native-community/datetimepicker';
-
-import RNPickerSelect from 'react-native-picker-select';
-import {
-    GooglePlacesAutocomplete,
-    GooglePlacesAutocompleteRef,
-    PlaceType,
-} from 'react-native-google-places-autocomplete';
+import { GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete';
 import 'react-native-get-random-values';
 
 const containsEmoji = (text: string) => {
@@ -41,11 +33,6 @@ const containsOnlyNumbers = (text: string) => {
 };
 const isValidAddress = (text: string) => {
     return /^[A-Za-z0-9\s\-\.,#]+$/.test(text);
-};
-
-// This code is from https://stackoverflow.com/questions/2577236/regex-for-zip-code
-const isValidZipCode = (text: string) => {
-    return /^\d{5}(?:[-\s]\d{4})?$/.test(text);
 };
 
 const isValidPhone = (text: string) => {
@@ -107,19 +94,6 @@ export default function Index() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectSpecies, setSelectSpecies] = useState('');
 
-    // Add this function to format the date for display
-    const formatDate = (date: Date | null) => {
-        if (!date) return '';
-        return date.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    };
-
-    // Add this state to track if the address search is active
-    // const [isAddressSearchActive, setIsAddressSearchActive] = useState(false);
-
     // Update the validation for page 1
     const validatePage1 = () => {
         let isValid = true;
@@ -130,6 +104,13 @@ export default function Index() {
         setEmailError('');
         setPhoneError('');
         setAddressError('');
+        // Reset pet details error states too
+        setPetNameError('');
+        setColorError('');
+        setSpeciesError('');
+        setBreedError('');
+        setBirthDateError('');
+        setSexError('');
 
         // First Name validation
         if (!firstName.trim()) {
@@ -188,18 +169,7 @@ export default function Index() {
             isValid = false;
         }
 
-        return isValid;
-    };
-
-    // Add validation functions for each page
-    const validatePage2 = () => {
-        let isValid = true;
-
-        // Reset errors
-        setPetNameError('');
-        setSpeciesError('');
-        setBreedError('');
-        setBirthDateError('');
+        // Pet Details Validation
 
         // Pet name validation
         if (!petName.trim()) {
@@ -210,8 +180,14 @@ export default function Index() {
             isValid = false;
         }
 
+        // Color validation
+        if (!color.trim()) {
+            setColorError('Color is required');
+            isValid = false;
+        }
+
         // Species validation
-        if (selectSpecies === null || !selectSpecies.trim()) {
+        if (!selectSpecies) {
             setSpeciesError('Species is required');
             isValid = false;
         }
@@ -228,7 +204,19 @@ export default function Index() {
             isValid = false;
         }
 
+        // Sex validation
+        if (!sex) {
+            setSexError('Sex is required');
+            isValid = false;
+        }
+
         return isValid;
+    };
+
+    // Add validation functions for each page
+    const validatePage2 = () => {
+        // Pet details are now validated on page 1
+        return true;
     };
 
     // Update validatePage3 to check birthDate instead of age
@@ -236,22 +224,8 @@ export default function Index() {
         let isValid = true;
 
         // Reset errors
-        setColorError('');
-        setSexError('');
         setSpayedNeuteredError('');
         setMicrochipError('');
-
-        // Color validation
-        if (!color.trim()) {
-            setColorError('Color is required');
-            isValid = false;
-        }
-
-        // Sex validation
-        if (!sex) {
-            setSexError('Please select a sex');
-            isValid = false;
-        }
 
         // Spayed or neutered validation
         if (!spayedOrNeutered) {
@@ -303,10 +277,10 @@ export default function Index() {
                 isValid = validatePage1();
                 break;
             case 1:
-                isValid = validatePage2();
+                isValid = validatePage3(); // Using page 3 validation for page 1 since we reordered
                 break;
             case 2:
-                isValid = validatePage3();
+                isValid = validatePage4();
                 break;
         }
 
@@ -409,6 +383,7 @@ export default function Index() {
             setColor('');
             setMicrochip('');
             setInitials('');
+
             // Reset the Google Places Autocomplete
             if (googlePlacesRef.current) {
                 googlePlacesRef.current.clear();
@@ -423,8 +398,8 @@ export default function Index() {
     };
 
     const [fontsLoaded] = useFonts({
-        Montserrat_400Regular,
-        Montserrat_700Bold,
+        Inter_400Regular,
+        Inter_700Bold,
     });
 
     if (!fontsLoaded) {
@@ -436,7 +411,13 @@ export default function Index() {
         lastNameError ||
         emailError ||
         phoneError ||
-        addressError
+        addressError ||
+        petNameError ||
+        colorError ||
+        speciesError ||
+        breedError ||
+        birthDateError ||
+        sexError
     );
     // const page2Error = petNameError || speciesError || breedError || birthDateError;
     // const page3Error = colorError || sexError || spayedNeuteredError || microchipError;
@@ -516,207 +497,6 @@ export default function Index() {
                 return (
                     <View style={[styles.page, { width }]}>
                         <View>
-                            <RequiredLabel text="Pet Name" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    petNameError ? styles.inputError : null,
-                                ]}
-                                placeholder="Pet's Name"
-                                value={petName}
-                                onChangeText={(text) => {
-                                    setPetName(text);
-                                    setPetNameError('');
-                                }}
-                            />
-                            {petNameError ? (
-                                <Text style={styles.errorText}>
-                                    {petNameError}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        <View>
-                            <View style={styles.inputGroup}>
-                                <RequiredLabel text="Species" />
-                                <View style={styles.pickerContainer}>
-                                    <RNPickerSelect
-                                        style={{
-                                            inputAndroid: {
-                                                fontSize: 20,
-                                                fontFamily:
-                                                    'Montserrat_400Regular',
-                                                paddingVertical: 0,
-                                                paddingHorizontal: 0,
-                                                color: 'black',
-                                            },
-                                            inputIOS: {
-                                                fontSize: 20,
-                                                fontFamily:
-                                                    'Montserrat_400Regular',
-                                                paddingVertical: 10,
-                                                paddingHorizontal: 10,
-                                                color: 'black',
-                                            },
-                                            placeholder: {
-                                                color: 'gray',
-                                                fontSize: 20,
-                                                fontFamily:
-                                                    'Montserrat_400Regular',
-                                            },
-                                            // No need for viewContainer styling when we're wrapping it
-                                        }}
-                                        placeholder={{
-                                            label: 'Species (Dog, Cat, etc.)',
-                                            value: null,
-                                            color: 'gray',
-                                        }}
-                                        value={selectSpecies}
-                                        onValueChange={(value) => {
-                                            setSelectSpecies(value);
-                                            setSpeciesError('');
-                                        }}
-                                        items={[
-                                            { label: 'Dog', value: 'Dog' },
-                                            { label: 'Cat', value: 'Cat' },
-                                            { label: 'Other', value: 'Other' },
-                                        ]}
-                                    />
-                                </View>
-                                {speciesError ? (
-                                    <Text style={styles.errorText}>
-                                        {speciesError}
-                                    </Text>
-                                ) : null}
-                            </View>
-                        </View>
-
-                        <View>
-                            <RequiredLabel text="Breed" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    breedError ? styles.inputError : null,
-                                ]}
-                                placeholder="Breed"
-                                value={breed}
-                                onChangeText={(text) => {
-                                    setBreed(text);
-                                    setBreedError('');
-                                }}
-                            />
-                            {breedError ? (
-                                <Text style={styles.errorText}>
-                                    {breedError}
-                                </Text>
-                            ) : null}
-                        </View>
-
-                        <View>
-                            <RequiredLabel text="Birth Date" />
-                            <TouchableOpacity
-                                style={[
-                                    styles.input,
-                                    styles.dateButton,
-                                    birthDateError ? styles.inputError : null,
-                                ]}
-                                onPress={() => setShowDatePicker(true)}
-                            >
-                                <Text style={styles.dateButtonText}>
-                                    {birthDate
-                                        ? formatDate(birthDate)
-                                        : 'Select Birth Date'}
-                                </Text>
-                            </TouchableOpacity>
-                            {birthDateError ? (
-                                <Text style={styles.errorText}>
-                                    {birthDateError}
-                                </Text>
-                            ) : null}
-
-                            {showDatePicker && (
-                                <DateTimePicker
-                                    value={birthDate || new Date()}
-                                    mode="date"
-                                    display="spinner"
-                                    onChange={onDateChange}
-                                    themeVariant="dark"
-                                    maximumDate={new Date()} // Prevents future dates
-                                />
-                            )}
-                        </View>
-                    </View>
-                );
-            case 2:
-                return (
-                    <View style={[styles.page, { width }]}>
-                        <View>
-                            <RequiredLabel text="Color" />
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    colorError ? styles.inputError : null,
-                                ]}
-                                placeholder="Color"
-                                value={color}
-                                onChangeText={(text) => {
-                                    setColor(text);
-                                    setColorError('');
-                                }}
-                            />
-                            {colorError ? (
-                                <Text style={styles.errorText}>
-                                    {colorError}
-                                </Text>
-                            ) : null}
-                        </View>
-                        <View>
-                            <RequiredLabel text="Sex" />
-                            <View style={styles.selectionButtons}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.optionButton,
-                                        sex === 'Male' && styles.selectedOption,
-                                    ]}
-                                    onPress={() => setSex('Male')}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.optionText,
-                                            sex === 'Male'
-                                                ? styles.selectedText
-                                                : styles.unselectedText,
-                                        ]}
-                                    >
-                                        Male
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.optionButton,
-                                        sex === 'Female' &&
-                                            styles.selectedOption,
-                                    ]}
-                                    onPress={() => setSex('Female')}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.optionText,
-                                            sex === 'Female'
-                                                ? styles.selectedText
-                                                : styles.unselectedText,
-                                        ]}
-                                    >
-                                        Female
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            {sexError ? (
-                                <Text style={styles.errorText}>{sexError}</Text>
-                            ) : null}
-                        </View>
-
-                        <View>
                             <RequiredLabel text="Spayed/Castrated" />
                             <View style={styles.selectionButtons}>
                                 <TouchableOpacity
@@ -789,7 +569,7 @@ export default function Index() {
                         </View>
                     </View>
                 );
-            case 3:
+            case 2:
                 return (
                     <View style={[styles.page, { width }]}>
                         <View>
@@ -830,6 +610,8 @@ export default function Index() {
                         </View>
                     </View>
                 );
+            case 3:
+                return null;
             default:
                 return null;
         }
@@ -850,7 +632,7 @@ export default function Index() {
                 {renderPageContent(2)}
                 {renderPageContent(3)}
             </ScrollView>
-            <View style={styles.navContainer}>
+            <View style={[styles.navContainer, { marginTop: 85 }]}>
                 <View style={styles.navLeft}>
                     {currentPage > 0 ? (
                         <TouchableOpacity
@@ -866,7 +648,7 @@ export default function Index() {
                 <View style={styles.navCenter}>
                     <Text style={styles.pageCount}>{`${
                         currentPage + 1
-                    }/4 pages`}</Text>
+                    } / 4`}</Text>
                 </View>
                 <View style={styles.navRight}>
                     {currentPage < 3 ? (
@@ -912,19 +694,19 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         marginBottom: 20,
         paddingLeft: 18,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
         fontSize: 22,
     },
     terms: {
         fontSize: 20,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
         paddingBottom: 10,
     },
     label: {
         fontSize: 22,
         marginLeft: 2,
         marginBottom: 5,
-        fontFamily: 'Montserrat_700Bold',
+        fontFamily: 'Inter_700Bold',
     },
     selectionButtons: {
         flexDirection: 'row',
@@ -947,11 +729,11 @@ const styles = StyleSheet.create({
     },
     unselectedText: {
         color: 'black',
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
     },
     selectedText: {
         color: 'white',
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
     },
     navContainer: {
         flexDirection: 'row',
@@ -961,39 +743,42 @@ const styles = StyleSheet.create({
     },
     navLeft: {
         flex: 1,
-        justifyContent: 'flex-start',
-        marginLeft: 15,
+        alignItems: 'flex-start',
+        marginLeft: 55,
     },
     navRight: {
         flex: 1,
         alignItems: 'flex-end',
-        marginRight: 15,
+        marginRight: 55,
     },
     navCenter: {
         flex: 1,
         alignItems: 'center',
+        marginBottom: 50,
     },
     navButton: {
-        padding: 10,
-        backgroundColor: '#007BFF', // or any other background color
-        borderRadius: 6,
-        width: 100,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        backgroundColor: Colors.darkBlue,
+        borderRadius: 12,
+        width: 120,
         alignItems: 'center',
+        marginBottom: 50,
     },
     submitButton: {
         backgroundColor: 'green',
     },
     navButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontFamily: 'Montserrat_700Bold',
+        color: Colors.white,
+        fontSize: 24,
+        fontFamily: 'Inter_700Bold',
     },
     navButtonPlaceholder: {
         width: 100,
     },
     pageCount: {
-        fontSize: 16,
-        fontFamily: 'Montserrat_700Bold',
+        fontSize: 24,
+        fontFamily: 'Inter_700Bold',
     },
     inputError: {
         borderColor: 'red',
@@ -1004,7 +789,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginTop: -10,
         marginBottom: 10,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
     },
     dateButton: {
         justifyContent: 'center',
@@ -1013,7 +798,7 @@ const styles = StyleSheet.create({
     },
     dateButtonText: {
         color: '#000',
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Inter_400Regular',
         fontSize: 20,
         paddingLeft: 0,
     },
@@ -1044,33 +829,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'gray',
         borderRadius: 6,
-        marginBottom: 15,
+        marginBottom: 0,
         height: 70,
         justifyContent: 'center',
-    },
-    cardContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 25,
-    },
-    card: {
-        width: '100%',
-        backgroundColor: '#FEFEFE',
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#76767633',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        paddingBottom: 25,
-        marginVertical: 20,
-    },
-    cardError: {
-        borderColor: Colors.red,
     },
 });

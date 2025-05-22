@@ -19,7 +19,7 @@ export default function RootLayout() {
                                 fontSize: 48,
                                 textAlign: 'center',
                                 width: '100%',
-                                paddingBottom: 30,
+                                paddingBottom: 40,
                                 paddingTop: 20,
                                 margin: 0,
                             }}

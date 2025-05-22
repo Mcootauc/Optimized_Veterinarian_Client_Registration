@@ -4,13 +4,29 @@ import { Colors } from '@/constants/Colors';
 export default function CardContainer({
     children,
     hasError,
+    paddingVertical = 10,
+    paddingBottom = 25,
 }: {
     children: React.ReactNode;
     hasError: boolean;
+    paddingVertical?: number;
+    paddingBottom?: number;
 }) {
+    const dynamicStyles = StyleSheet.create({
+        card: {
+            paddingBottom,
+        },
+    });
+
     return (
         <View style={styles.cardContainer}>
-            <View style={[styles.card, hasError && styles.cardError]}>
+            <View
+                style={[
+                    styles.card,
+                    dynamicStyles.card,
+                    hasError && styles.cardError,
+                ]}
+            >
                 {children}
             </View>
         </View>
@@ -26,7 +42,7 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '100%',
-        backgroundColor: '#FEFEFE',
+        backgroundColor: Colors.white,
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#76767633',
@@ -35,10 +51,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 1,
-        paddingVertical: 10,
         paddingHorizontal: 10,
-        paddingBottom: 25,
-        marginVertical: 5,
+        paddingVertical: 10,
     },
     cardError: {
         borderColor: Colors.red,

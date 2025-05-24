@@ -7,4 +7,22 @@ expo-env.d.ts
 .env*.local
 .env
 android/
+
+# Expo local files
+.expo/
+
 # @end expo-cli
+
+# iOS
+ios/
+
+# Build artifacts  
+dist/
+.expo-shared/
+
+# VS Code
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db

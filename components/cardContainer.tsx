@@ -4,7 +4,7 @@ import { Colors } from '@/constants/Colors';
 export default function CardContainer({
     children,
     hasError,
-    paddingVertical = 10,
+    paddingVertical, // Kept for backward compatibility but not used
     paddingBottom = 25,
 }: {
     children: React.ReactNode;
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 1,
         paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingTop: 0, // No padding at the top
     },
     cardError: {
         borderColor: Colors.red,

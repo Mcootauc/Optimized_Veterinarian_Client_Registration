@@ -21,9 +21,7 @@ const Divider: React.FC<DividerProps> = ({
         dividerStyle,
     ];
 
-    return (
-        <View style={[dividerStyles, { marginBottom: 20, marginTop: 15 }]} />
-    );
+    return <View style={[dividerStyles, { marginBottom: 12, marginTop: 5 }]} />;
 };
 
 export default Divider;

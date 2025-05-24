@@ -28,9 +28,9 @@ export const submitFormData = async (formData: any) => {
                 breed: formData.breed,
                 birth_date: formData.birthDate,
                 sex: formData.sex,
-                spayed_or_neutered: formData.spayedOrNeutered === 'Yes',
+                spayed_or_neutered: formData.spayedOrNeutered,
                 color: formData.color,
-                microchip: formData.microchip === 'Yes',
+                microchip: formData.microchip,
                 initials: formData.initials,
             },
         ]);

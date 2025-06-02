@@ -74,7 +74,7 @@ const OwnerDetailsCard = ({
     width,
 }: OwnerDetailsCardProps) => {
     return (
-        <CardContainer hasError={hasError} paddingBottom={25}>
+        <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
                 <Text style={styles.pageTitle}>Owner Details</Text>
                 <Divider
@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         padding: 10,
-        paddingVertical: 15,
-        marginBottom: 0,
+        paddingVertical: 0,
+        marginTop: 15,
     },
     pageTitle: {
         fontSize: 16,

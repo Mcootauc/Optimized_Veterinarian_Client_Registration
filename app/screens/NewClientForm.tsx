@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Divider from '@/components/Divider';
 import { Colors } from '@/constants/Colors';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
     View,
     TextInput,
@@ -321,17 +319,8 @@ export default function NewClientForm() {
         }
     };
 
-    // Add this component near the top of the file, after the imports
-    const RequiredLabel = ({ text }: { text: string }) => (
-        <Text style={styles.label}>
-            {text}
-            <Text style={styles.required}>*</Text>
-        </Text>
-    );
-
     // Add a ref to the GooglePlacesAutocomplete component
     const googlePlacesRef = useRef<GooglePlacesAutocompleteRef>(null!);
-    const router = useRouter();
 
     // Update handleSubmit to validate before submitting
     const handleSubmit = async () => {
@@ -443,104 +432,121 @@ export default function NewClientForm() {
     // On page 3, "Submit" is on the right (green button).
     // Render content for a given page number
     const renderPageContent = (page: number) => {
-        // console.log(process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY);
         switch (page) {
             case 0:
                 return (
-                    <View style={{ marginTop: 30 }}>
-                        <OwnerDetailsCard
-                            firstName={firstName}
-                            setFirstName={setFirstName}
-                            firstNameError={firstNameError}
-                            setFirstNameError={setFirstNameError}
-                            lastName={lastName}
-                            setLastName={setLastName}
-                            lastNameError={lastNameError}
-                            setLastNameError={setLastNameError}
-                            email={email}
-                            setEmail={setEmail}
-                            emailError={emailError}
-                            setEmailError={setEmailError}
-                            cellPhone={cellPhone}
-                            setCellPhone={setCellPhone}
-                            phoneError={phoneError}
-                            setPhoneError={setPhoneError}
-                            homeAddress={homeAddress}
-                            setHomeAddress={setHomeAddress}
-                            setStreet={setStreet}
-                            setCity={setCity}
-                            setState={setState}
-                            setZipCode={setZipCode}
-                            addressError={addressError}
-                            setAddressError={setAddressError}
-                            isAddressFocused={isAddressFocused}
-                            setIsAddressFocused={setIsAddressFocused}
-                            googlePlacesRef={googlePlacesRef}
-                            hasError={ownerDetailsCardHasError}
-                            width={width}
-                        />
-
-                        {/* Pet Details */}
-                        <PetDetailsCard
-                            petName={petName}
-                            setPetName={setPetName}
-                            petNameError={petNameError}
-                            setPetNameError={setPetNameError}
-                            color={color}
-                            setColor={setColor}
-                            colorError={colorError}
-                            setColorError={setColorError}
-                            selectSpecies={selectSpecies}
-                            setSelectSpecies={setSelectSpecies}
-                            speciesError={speciesError}
-                            setSpeciesError={setSpeciesError}
-                            breed={breed}
-                            setBreed={setBreed}
-                            breedError={breedError}
-                            setBreedError={setBreedError}
-                            birthDate={birthDate}
-                            setBirthDate={setBirthDate}
-                            birthDateError={birthDateError}
-                            setBirthDateError={setBirthDateError}
-                            showDatePicker={showDatePicker}
-                            setShowDatePicker={setShowDatePicker}
-                            sex={sex}
-                            setSex={setSex}
-                            sexError={sexError}
-                            setSexError={setSexError}
-                            formatDate={formatDate}
-                            onDateChange={onDateChange}
-                            hasError={petDetailsCardHasError}
-                            width={width}
-                        />
-                        <AssistanceText width={width} />
-                    </View>
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            paddingBottom: 20,
+                        }}
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={{ marginTop: 40, gap: 30 }}>
+                            <OwnerDetailsCard
+                                firstName={firstName}
+                                setFirstName={setFirstName}
+                                firstNameError={firstNameError}
+                                setFirstNameError={setFirstNameError}
+                                lastName={lastName}
+                                setLastName={setLastName}
+                                lastNameError={lastNameError}
+                                setLastNameError={setLastNameError}
+                                email={email}
+                                setEmail={setEmail}
+                                emailError={emailError}
+                                setEmailError={setEmailError}
+                                cellPhone={cellPhone}
+                                setCellPhone={setCellPhone}
+                                phoneError={phoneError}
+                                setPhoneError={setPhoneError}
+                                homeAddress={homeAddress}
+                                setHomeAddress={setHomeAddress}
+                                setStreet={setStreet}
+                                setCity={setCity}
+                                setState={setState}
+                                setZipCode={setZipCode}
+                                addressError={addressError}
+                                setAddressError={setAddressError}
+                                isAddressFocused={isAddressFocused}
+                                setIsAddressFocused={setIsAddressFocused}
+                                googlePlacesRef={googlePlacesRef}
+                                hasError={ownerDetailsCardHasError}
+                                width={width}
+                            />
+                            <PetDetailsCard
+                                petName={petName}
+                                setPetName={setPetName}
+                                petNameError={petNameError}
+                                setPetNameError={setPetNameError}
+                                color={color}
+                                setColor={setColor}
+                                colorError={colorError}
+                                setColorError={setColorError}
+                                selectSpecies={selectSpecies}
+                                setSelectSpecies={setSelectSpecies}
+                                speciesError={speciesError}
+                                setSpeciesError={setSpeciesError}
+                                breed={breed}
+                                setBreed={setBreed}
+                                breedError={breedError}
+                                setBreedError={setBreedError}
+                                birthDate={birthDate}
+                                setBirthDate={setBirthDate}
+                                birthDateError={birthDateError}
+                                setBirthDateError={setBirthDateError}
+                                showDatePicker={showDatePicker}
+                                setShowDatePicker={setShowDatePicker}
+                                sex={sex}
+                                setSex={setSex}
+                                sexError={sexError}
+                                setSexError={setSexError}
+                                formatDate={formatDate}
+                                onDateChange={onDateChange}
+                                hasError={petDetailsCardHasError}
+                                width={width}
+                            />
+                            <AssistanceText width={width} />
+                        </View>
+                    </ScrollView>
                 );
             case 1:
                 return (
-                    <View style={{ marginTop: 30 }}>
-                        <StatusCard
-                            spayedOrNeutered={spayedOrNeutered}
-                            setSpayedOrNeutered={setSpayedOrNeutered}
-                            microchipStatus={microchipStatus}
-                            setMicrochipStatus={setMicrochipStatus}
-                            microchip={microchip}
-                            setMicrochip={setMicrochip}
-                            spayedNeuteredError={spayedNeuteredError}
-                            microchipError={microchipError}
-                            hasError={statusCardHasError}
-                            width={width}
-                        />
-                        <Terms
-                            initials={initials}
-                            setInitials={setInitials}
-                            initialsError={initialsError}
-                            setInitialsError={setInitialsError}
-                            width={width}
-                            hasError={termsCardHasError}
-                        />
-                        <AssistanceText width={width} />
-                    </View>
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            paddingBottom: 20,
+                        }}
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={{ marginTop: 40, gap: 30 }}>
+                            <StatusCard
+                                spayedOrNeutered={spayedOrNeutered}
+                                setSpayedOrNeutered={setSpayedOrNeutered}
+                                microchipStatus={microchipStatus}
+                                setMicrochipStatus={setMicrochipStatus}
+                                microchip={microchip}
+                                setMicrochip={setMicrochip}
+                                spayedNeuteredError={spayedNeuteredError}
+                                microchipError={microchipError}
+                                hasError={statusCardHasError}
+                                width={width}
+                            />
+                            <Terms
+                                initials={initials}
+                                setInitials={setInitials}
+                                initialsError={initialsError}
+                                setInitialsError={setInitialsError}
+                                width={width}
+                                hasError={termsCardHasError}
+                            />
+                            <AssistanceText width={width} />
+                        </View>
+                    </ScrollView>
                 );
             default:
                 return null;
@@ -556,11 +562,12 @@ export default function NewClientForm() {
                 ref={scrollViewRef}
                 showsHorizontalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
+                style={{ flex: 1 }}
             >
                 {renderPageContent(0)}
                 {renderPageContent(1)}
             </ScrollView>
-            <View style={[styles.navContainer, { marginTop: 25 }]}>
+            <View style={[styles.navContainer, { margin: 'auto' }]}>
                 <View style={styles.navLeft}>
                     {currentPage > 0 ? (
                         <TouchableOpacity

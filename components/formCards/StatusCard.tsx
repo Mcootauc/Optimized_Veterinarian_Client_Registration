@@ -21,6 +21,7 @@ interface StatusCardProps {
     microchipError?: string;
     hasError: boolean;
     width: number;
+    dividerColor: string;
 }
 
 const StatusCard = ({
@@ -34,13 +35,14 @@ const StatusCard = ({
     microchipError,
     hasError,
     width,
+    dividerColor,
 }: StatusCardProps) => {
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 80 }]}>
                 <Text style={styles.pageTitle}>Status</Text>
                 <Divider
-                    color={Colors.darkBlue}
+                    color={dividerColor}
                     width={2}
                     orientation="horizontal"
                 />

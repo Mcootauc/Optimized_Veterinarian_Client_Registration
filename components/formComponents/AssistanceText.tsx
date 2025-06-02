@@ -1,15 +1,25 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
-export default function AssistanceText({ width }: { width: number }) {
+export default function AssistanceText({
+    width,
+    color = Colors.darkBlue,
+}: {
+    width: number;
+    color: string | undefined;
+}) {
     return (
         <View style={[styles.assistanceText, { width: width }]}>
             <Text style={styles.assistanceTextBase}>
                 If you have any questions, please ask the{' '}
             </Text>
-            <Text style={styles.assistanceTextHighlight}>front desk</Text>
+            <Text style={[styles.assistanceTextHighlight, { color: color }]}>
+                front desk
+            </Text>
             <Text style={styles.assistanceTextBase}> or any available </Text>
-            <Text style={styles.assistanceTextHighlight}>vet technician</Text>
+            <Text style={[styles.assistanceTextHighlight, { color: color }]}>
+                vet technician
+            </Text>
             <Text style={styles.assistanceTextBase}>!</Text>
         </View>
     );
@@ -35,7 +45,6 @@ const styles = StyleSheet.create({
     assistanceTextHighlight: {
         fontSize: 18,
         fontFamily: 'Inter_700Bold',
-        color: Colors.darkBlue,
         textAlign: 'center',
     },
 });

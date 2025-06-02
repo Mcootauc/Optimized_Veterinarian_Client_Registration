@@ -66,6 +66,26 @@ export default function RootLayout() {
                     ),
                 }}
             />
+            {/* New‑pet form */}
+            <Stack.Screen
+                name="screens/NewPetForm" // <‑ file‑system route
+                options={{
+                    headerStyle: { backgroundColor: Colors.steelBlue },
+                    headerTintColor: Colors.white, // colour for the back arrow
+                    // override the title so we can use our own font
+                    headerTitle: () => (
+                        <Text
+                            style={{
+                                fontFamily: 'Inter_700Bold',
+                                fontSize: 16,
+                                color: Colors.white,
+                            }}
+                        >
+                            New Pet Registration
+                        </Text>
+                    ),
+                }}
+            />
         </Stack>
     );
 }

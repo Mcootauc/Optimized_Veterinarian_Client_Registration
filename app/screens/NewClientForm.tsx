@@ -475,6 +475,7 @@ export default function NewClientForm() {
                                 googlePlacesRef={googlePlacesRef}
                                 hasError={ownerDetailsCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
                             <PetDetailsCard
                                 petName={petName}
@@ -507,8 +508,12 @@ export default function NewClientForm() {
                                 onDateChange={onDateChange}
                                 hasError={petDetailsCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
-                            <AssistanceText width={width} />
+                            <AssistanceText
+                                width={width}
+                                color={Colors.darkBlue}
+                            />
                         </View>
                     </ScrollView>
                 );
@@ -535,6 +540,7 @@ export default function NewClientForm() {
                                 microchipError={microchipError}
                                 hasError={statusCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
                             <Terms
                                 initials={initials}
@@ -543,8 +549,12 @@ export default function NewClientForm() {
                                 setInitialsError={setInitialsError}
                                 width={width}
                                 hasError={termsCardHasError}
+                                dividerColor={Colors.darkBlue}
                             />
-                            <AssistanceText width={width} />
+                            <AssistanceText
+                                width={width}
+                                color={Colors.darkBlue}
+                            />
                         </View>
                     </ScrollView>
                 );

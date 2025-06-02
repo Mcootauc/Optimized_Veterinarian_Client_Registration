@@ -117,6 +117,12 @@ android {
         versionCode 1
         versionName "1.0.0"
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

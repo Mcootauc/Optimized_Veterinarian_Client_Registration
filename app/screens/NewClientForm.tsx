@@ -444,7 +444,7 @@ export default function NewClientForm() {
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
                     >
-                        <View style={{ marginTop: 40, gap: 30 }}>
+                        <View style={{ marginTop: 40, gap: 40 }}>
                             <OwnerDetailsCard
                                 firstName={firstName}
                                 setFirstName={setFirstName}
@@ -528,7 +528,7 @@ export default function NewClientForm() {
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
                     >
-                        <View style={{ marginTop: 40, gap: 30 }}>
+                        <View style={{ marginTop: 40, gap: 40 }}>
                             <StatusCard
                                 spayedOrNeutered={spayedOrNeutered}
                                 setSpayedOrNeutered={setSpayedOrNeutered}

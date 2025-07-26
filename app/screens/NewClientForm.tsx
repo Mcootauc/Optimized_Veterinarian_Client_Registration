@@ -229,26 +229,6 @@ export default function NewClientForm() {
         if (!microchipStatus) {
             setMicrochipError('Please select yes, no, or unknown');
             isValid = false;
-        } else if (microchipStatus === 'Yes') {
-            // If user selected "Yes", they must provide a valid microchip number
-            if (microchip.length === 0) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            } else if (!containsOnlyNumbers(microchip)) {
-                setMicrochipError('Microchip number can only contain numbers');
-                isValid = false;
-            } else if (
-                microchip.length !== 9 &&
-                microchip.length !== 10 &&
-                microchip.length !== 15
-            ) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            }
         }
 
         // Initials validation

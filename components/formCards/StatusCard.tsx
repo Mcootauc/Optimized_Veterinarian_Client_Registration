@@ -190,20 +190,6 @@ const StatusCard = ({
                         </View>
                     </View>
 
-                    <TextInput
-                        style={[
-                            styles.input,
-                            microchipError ? styles.inputError : null,
-                            microchipStatus !== 'Yes'
-                                ? styles.disabledInput
-                                : null,
-                        ]}
-                        placeholder="Microchip e.g. 4444111122"
-                        value={microchip}
-                        onChangeText={setMicrochip}
-                        editable={microchipStatus === 'Yes'}
-                    />
-
                     {microchipError ? (
                         <Text style={styles.microchipErrorText}>
                             {microchipError}

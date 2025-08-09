@@ -25,6 +25,6 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo install expo-dev-client
     npx expo install @react-native-community/datetimepicker
     npx expo install @react-native-picker/picker
-    
-    eas build --profile development --platform android
-    eas build --platform android --profile production
+
+    eas build --profile development --platform android --local
+    eas build --platform android --profile production --local

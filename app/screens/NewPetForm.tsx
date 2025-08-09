@@ -23,7 +23,7 @@ import {
     isValidPhone,
     isValidEmail,
 } from '../ErrorCheck';
-import { submitFormData } from '../Services/SupabaseService';
+import { submitPetFormData } from '../Services/SupabaseService';
 import {
     GooglePlacesAutocomplete,
     GooglePlacesAutocompleteRef,
@@ -356,7 +356,7 @@ export default function NewPetForm() {
         };
 
         try {
-            const responseMessage = await submitFormData(formData);
+            const responseMessage = await submitPetFormData(formData);
             Alert.alert('Success', responseMessage);
 
             // Reset form fields

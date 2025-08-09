@@ -23,7 +23,7 @@ import {
     isValidPhone,
     isValidEmail,
 } from '../ErrorCheck';
-import { submitFormData } from '../Services/SupabaseService';
+import { submitClientFormData } from '../Services/SupabaseService';
 import {
     GooglePlacesAutocomplete,
     GooglePlacesAutocompleteRef,
@@ -331,12 +331,12 @@ export default function NewClientForm() {
             sex,
             spayedOrNeutered,
             color,
-            microchip: microchipStatus === 'Yes' ? microchip : microchipStatus,
+            microchip: microchipStatus,
             initials,
         };
 
         try {
-            const responseMessage = await submitFormData(formData);
+            const responseMessage = await submitClientFormData(formData);
             Alert.alert('Success', responseMessage);
 
             // Reset form fields

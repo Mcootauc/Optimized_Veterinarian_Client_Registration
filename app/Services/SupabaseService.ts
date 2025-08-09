@@ -6,16 +6,13 @@ export const supabase = createClient(
     process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY! // assert Non-null
 );
 
-// Submit form data to Supabase
-export const submitFormData = async (formData: any) => {
+// Submit new client form data to Supabase
+export const submitClientFormData = async (formData: any) => {
     try {
-        // Create an ISO format timestamp instead of using the localized string
-        const timestamp = new Date().toISOString();
-
         // Transform data to match Supabase column names
-        const { data, error } = await supabase.from('VVH_Clients').insert([
+        const { data, error } = await supabase.from('clients').insert([
             {
-                timestamp: timestamp, // Use the ISO format timestamp
+                hospital_id: 1,
                 owner_name: formData.ownerName,
                 street: formData.street,
                 city: formData.city,
@@ -36,9 +33,39 @@ export const submitFormData = async (formData: any) => {
         ]);
 
         if (error) throw error;
-        return 'Successfully submitted! Thank you!';
+        return 'Successfully submitted client! Thank you!';
     } catch (error: any) {
-        console.error('Error submitting form:', error);
+        console.error('Error submitting client form:', error);
+        throw error;
+    }
+};
+
+// Submit new client form data to Supabase
+export const submitPetFormData = async (formData: any) => {
+    try {
+        // Transform data to match Supabase column names
+        const { data, error } = await supabase.from('clients').insert([
+            {
+                hospital_id: 1,
+                owner_name: formData.ownerName,
+                cell_phone: formData.cellPhone,
+                email: formData.email,
+                pet_name: formData.petName,
+                species: formData.selectSpecies,
+                breed: formData.breed,
+                birth_date: formData.birthDate,
+                sex: formData.sex,
+                spayed_or_neutered: formData.spayedOrNeutered,
+                color: formData.color,
+                microchip: formData.microchip,
+                initials: formData.initials,
+            },
+        ]);
+
+        if (error) throw error;
+        return 'Successfully submitted pet! Thank you!';
+    } catch (error: any) {
+        console.error('Error submitting pet form:', error);
         throw error;
     }
 };

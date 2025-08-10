@@ -12,29 +12,27 @@ export const submitFormData = async (formData: any) => {
         // Create an ISO format timestamp instead of using the localized string
         const timestamp = new Date().toISOString();
 
-        // Transform data to match Supabase column names
-        const { data, error } = await supabase.from('VVH_Clients').insert([
-            {
-                timestamp: timestamp, // Use the ISO format timestamp
-                owner_name: formData.ownerName,
-                street: formData.street,
-                city: formData.city,
-                state: formData.state,
-                zip_code: formData.zipCode,
-                cell_phone: formData.cellPhone,
-                email: formData.email,
-                pet_name: formData.petName,
-                species: formData.selectSpecies,
-                breed: formData.breed,
-                birth_date: formData.birthDate,
-                sex: formData.sex,
-                spayed_or_neutered: formData.spayedOrNeutered,
-                color: formData.color,
-                microchip: formData.microchip,
-                initials: formData.initials,
-            },
-        ]);
+        const payload = {
+            timestamp, // or omit to use DB default now()
+            owner_name: formData.ownerName,
+            street: formData.street,
+            city: formData.city,
+            state: formData.state,
+            zip_code: formData.zipCode,
+            cell_phone: formData.cellPhone,
+            email: formData.email,
+            pet_name: formData.petName,
+            species: formData.selectSpecies,
+            breed: formData.breed,
+            birth_date: formData.birthDate, // ISO string
+            sex: formData.sex,
+            spayed_or_neutered: formData.spayedOrNeutered,
+            color: formData.color,
+            microchip: formData.microchip,
+            initials: formData.initials,
+        };
 
+        const { error } = await supabase.rpc('create_vvh_client', { payload });
         if (error) throw error;
         return 'Successfully submitted! Thank you!';
     } catch (error: any) {

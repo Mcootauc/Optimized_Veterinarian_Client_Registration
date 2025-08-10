@@ -52,5 +52,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-expo-env.d.ts
 # @end expo-cli
+
+.expo/devices.json
+expo-env.d.ts

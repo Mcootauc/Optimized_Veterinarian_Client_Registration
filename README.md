@@ -16,15 +16,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
          npx expo start
         ```
 
-    npm install react-native-google-places-autocomplete
-    npm install react-native-dropdown-picker
-    npm install react-native-get-random-values
-    npm install expo-splash-screen
-    npm install react-native-vector-icons
-    npm install @supabase/supabase-js
-    npx expo install expo-dev-client
-    npx expo install @react-native-community/datetimepicker
-    npx expo install @react-native-picker/picker
+    ** non local commands **
+    eas build --profile development --platform android
+    eas build --platform android --profile production
 
+    ** local commands **
     eas build --profile development --platform android --local
     eas build --platform android --profile production --local
+
+    Clean and regenerate Android native project
+    npx expo prebuild -p android --clean --non-interactive
+
+    Install and run the dev client on an emulator/device
+    npx expo run:android

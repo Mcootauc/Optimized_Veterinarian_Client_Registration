@@ -9,11 +9,7 @@ export const supabase = createClient(
 // Submit new client form data to Supabase
 export const submitClientFormData = async (formData: any) => {
     try {
-        // Create an ISO format timestamp instead of using the localized string
-        const timestamp = new Date().toISOString();
-
         const payload = {
-            timestamp, // or omit to use DB default now()
             owner_name: formData.ownerName,
             street: formData.street,
             city: formData.city,
@@ -30,9 +26,38 @@ export const submitClientFormData = async (formData: any) => {
             color: formData.color,
             microchip: formData.microchip,
             initials: formData.initials,
+            hospital_id: 1, // TODO: change to the hospital id to specify which hospital the client is from
         };
 
-        const { error } = await supabase.rpc('create_vvh_client', { payload });
+        const { error } = await supabase.rpc('create_client', { payload });
+        if (error) throw error;
+        return 'Successfully submitted client information! Thank you!';
+    } catch (error: any) {
+        console.error('Error submitting client form:', error);
+        throw error;
+    }
+};
+
+// Submit new pet form data to Supabase
+export const submitPetFormData = async (formData: any) => {
+    try {
+        const payload = {
+            owner_name: formData.ownerName,
+            cell_phone: formData.cellPhone,
+            email: formData.email,
+            pet_name: formData.petName,
+            species: formData.selectSpecies,
+            breed: formData.breed,
+            birth_date: formData.birthDate, // ISO string
+            sex: formData.sex,
+            spayed_or_neutered: formData.spayedOrNeutered,
+            color: formData.color,
+            microchip: formData.microchip,
+            initials: formData.initials,
+            hospital_id: 1, // TODO: change to the hospital id to specify which hospital the client is from
+        };
+
+        const { error } = await supabase.rpc('create_client', { payload });
         if (error) throw error;
         return 'Successfully submitted! Thank you!';
     } catch (error: any) {

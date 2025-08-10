@@ -308,15 +308,9 @@ export default function NewClientForm() {
             return;
         }
 
-        // Generate the timestamp when the form is submitted
-        const timestamp = new Date().toLocaleString('en-US', {
-            timeZone: 'America/Los_Angeles',
-        });
-
         const ownerName = `${firstName} ${lastName}`;
 
         const formData = {
-            timestamp,
             ownerName,
             street,
             city,

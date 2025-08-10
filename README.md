@@ -23,3 +23,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     ** local commands **
     eas build --profile development --platform android --local
     eas build --platform android --profile production --local
+
+    Clean and regenerate Android native project
+    npx expo prebuild -p android --clean --non-interactive
+
+    Install and run the dev client on an emulator/device
+    npx expo run:android

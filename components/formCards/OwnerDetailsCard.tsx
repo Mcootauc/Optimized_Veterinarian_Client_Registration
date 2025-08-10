@@ -40,6 +40,7 @@ interface OwnerDetailsCardProps {
     googlePlacesRef: React.RefObject<GooglePlacesAutocompleteRef>;
     hasError: boolean;
     width: number;
+    dividerColor: string;
 }
 
 const OwnerDetailsCard = ({
@@ -72,13 +73,14 @@ const OwnerDetailsCard = ({
     googlePlacesRef,
     hasError,
     width,
+    dividerColor,
 }: OwnerDetailsCardProps) => {
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
                 <Text style={styles.pageTitle}>Owner Details</Text>
                 <Divider
-                    color={Colors.darkBlue}
+                    color={dividerColor}
                     width={2}
                     orientation="horizontal"
                 />

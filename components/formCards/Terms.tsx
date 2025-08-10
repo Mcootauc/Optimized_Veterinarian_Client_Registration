@@ -10,6 +10,7 @@ export default function Terms({
     setInitialsError,
     width,
     hasError,
+    dividerColor,
 }: {
     initials: string;
     setInitials: (text: string) => void;
@@ -17,13 +18,14 @@ export default function Terms({
     setInitialsError: (text: string) => void;
     width: number;
     hasError: boolean;
+    dividerColor: string;
 }) {
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 80 }]}>
                 <Text style={styles.pageTitle}>Terms</Text>
                 <Divider
-                    color={Colors.darkBlue}
+                    color={dividerColor}
                     width={2}
                     orientation="horizontal"
                 />

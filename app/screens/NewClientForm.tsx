@@ -229,26 +229,6 @@ export default function NewClientForm() {
         if (!microchipStatus) {
             setMicrochipError('Please select yes, no, or unknown');
             isValid = false;
-        } else if (microchipStatus === 'Yes') {
-            // If user selected "Yes", they must provide a valid microchip number
-            if (microchip.length === 0) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            } else if (!containsOnlyNumbers(microchip)) {
-                setMicrochipError('Microchip number can only contain numbers');
-                isValid = false;
-            } else if (
-                microchip.length !== 9 &&
-                microchip.length !== 10 &&
-                microchip.length !== 15
-            ) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            }
         }
 
         // Initials validation
@@ -444,7 +424,7 @@ export default function NewClientForm() {
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
                     >
-                        <View style={{ marginTop: 40, gap: 30 }}>
+                        <View style={{ marginTop: 40, gap: 40 }}>
                             <OwnerDetailsCard
                                 firstName={firstName}
                                 setFirstName={setFirstName}
@@ -475,6 +455,7 @@ export default function NewClientForm() {
                                 googlePlacesRef={googlePlacesRef}
                                 hasError={ownerDetailsCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
                             <PetDetailsCard
                                 petName={petName}
@@ -507,8 +488,12 @@ export default function NewClientForm() {
                                 onDateChange={onDateChange}
                                 hasError={petDetailsCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
-                            <AssistanceText width={width} />
+                            <AssistanceText
+                                width={width}
+                                color={Colors.darkBlue}
+                            />
                         </View>
                     </ScrollView>
                 );
@@ -523,7 +508,7 @@ export default function NewClientForm() {
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
                     >
-                        <View style={{ marginTop: 40, gap: 30 }}>
+                        <View style={{ marginTop: 40, gap: 40 }}>
                             <StatusCard
                                 spayedOrNeutered={spayedOrNeutered}
                                 setSpayedOrNeutered={setSpayedOrNeutered}
@@ -535,6 +520,7 @@ export default function NewClientForm() {
                                 microchipError={microchipError}
                                 hasError={statusCardHasError}
                                 width={width}
+                                dividerColor={Colors.darkBlue}
                             />
                             <Terms
                                 initials={initials}
@@ -543,8 +529,12 @@ export default function NewClientForm() {
                                 setInitialsError={setInitialsError}
                                 width={width}
                                 hasError={termsCardHasError}
+                                dividerColor={Colors.darkBlue}
                             />
-                            <AssistanceText width={width} />
+                            <AssistanceText
+                                width={width}
+                                color={Colors.darkBlue}
+                            />
                         </View>
                     </ScrollView>
                 );

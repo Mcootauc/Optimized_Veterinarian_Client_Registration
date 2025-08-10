@@ -44,8 +44,8 @@ export default function Index() {
 
             <TouchableOpacity
                 style={[styles.button, styles.secondaryButton]}
+                onPress={() => router.push('/screens/NewPetForm')}
                 disabled={true}
-                onPress={() => {}}
             >
                 <Text style={styles.buttonText}>New Pet Registration</Text>
             </TouchableOpacity>

@@ -39,6 +39,7 @@ interface PetDetailsCardProps {
     onDateChange: (event: any, selectedDate?: Date) => void;
     hasError: boolean;
     width: number;
+    dividerColor: string;
 }
 
 const PetDetailsCard = ({
@@ -72,13 +73,14 @@ const PetDetailsCard = ({
     onDateChange,
     hasError,
     width,
+    dividerColor,
 }: PetDetailsCardProps) => {
     return (
         <CardContainer hasError={hasError} paddingBottom={5}>
             <View style={[styles.container, { width: width - 70 }]}>
                 <Text style={styles.pageTitle}>Pet Details</Text>
                 <Divider
-                    color={Colors.darkBlue}
+                    color={dividerColor}
                     width={2}
                     orientation="horizontal"
                 />

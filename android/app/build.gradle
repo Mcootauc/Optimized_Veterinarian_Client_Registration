@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.mitchxcool.ValleyVetKiosk"
+    namespace 'com.mitchxcool.ValleyVetKiosk'
     defaultConfig {
         applicationId 'com.mitchxcool.ValleyVetKiosk'
         minSdkVersion rootProject.ext.minSdkVersion
@@ -117,12 +117,6 @@ android {
         versionCode 1
         versionName "1.0.0"
     }
-
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

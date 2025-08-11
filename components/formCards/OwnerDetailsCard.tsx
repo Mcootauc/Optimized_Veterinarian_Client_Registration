@@ -9,6 +9,7 @@ import {
     GooglePlacesAutocompleteRef,
     PlaceType,
 } from 'react-native-google-places-autocomplete';
+import { useLanguage } from '../../app/hooks/useLanguage';
 
 interface OwnerDetailsCardProps {
     firstName: string;
@@ -75,10 +76,12 @@ const OwnerDetailsCard = ({
     width,
     dividerColor,
 }: OwnerDetailsCardProps) => {
+    const { t } = useLanguage();
+
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
-                <Text style={styles.pageTitle}>Owner Details</Text>
+                <Text style={styles.pageTitle}>{t('clientForm.title')}</Text>
                 <Divider
                     color={dividerColor}
                     width={2}
@@ -94,7 +97,7 @@ const OwnerDetailsCard = ({
                     >
                         <View style={{ flex: 1, minWidth: 0 }}>
                             <InputField
-                                placeholder="First Name"
+                                placeholder={t('clientForm.firstName')}
                                 value={firstName}
                                 onChangeText={(t) => {
                                     setFirstName(t);
@@ -105,7 +108,7 @@ const OwnerDetailsCard = ({
                         </View>
                         <View style={{ flex: 1, minWidth: 0 }}>
                             <InputField
-                                placeholder="Last Name"
+                                placeholder={t('clientForm.lastName')}
                                 value={lastName}
                                 onChangeText={(t) => {
                                     setLastName(t);
@@ -119,7 +122,7 @@ const OwnerDetailsCard = ({
                 {!isAddressFocused && (
                     <View>
                         <InputField
-                            placeholder="Email"
+                            placeholder={t('clientForm.email')}
                             value={email}
                             onChangeText={(t) => {
                                 setEmail(t);
@@ -132,7 +135,7 @@ const OwnerDetailsCard = ({
                 {!isAddressFocused && (
                     <View>
                         <InputField
-                            placeholder="Phone Number e.g. 6265551212"
+                            placeholder={t('clientForm.cellPhone')}
                             value={cellPhone}
                             onChangeText={(t) => {
                                 setCellPhone(t);

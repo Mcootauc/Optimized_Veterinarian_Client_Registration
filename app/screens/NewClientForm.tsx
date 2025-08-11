@@ -37,8 +37,11 @@ import PetDetailsCard from '@/components/formCards/PetDetailsCard';
 import StatusCard from '@/components/formCards/StatusCard';
 import Terms from '@/components/formCards/Terms';
 import AssistanceText from '@/components/formComponents/AssistanceText';
+import { useLanguage } from '../hooks/useLanguage';
 
 export default function NewClientForm() {
+    const { t } = useLanguage();
+
     // Form fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -113,57 +116,57 @@ export default function NewClientForm() {
         // First Name validation
         if (!firstName.trim()) {
             // If the first name is empty, set the error message
-            setFirstNameError('First name is required');
+            setFirstNameError(t('clientForm.validation.firstNameRequired'));
             isValid = false;
         } else if (containsEmoji(firstName)) {
             // If the first name contains an emoji, set the error message
-            setFirstNameError('First name cannot contain emojis');
+            setFirstNameError(t('clientForm.validation.firstNameEmoji'));
             isValid = false;
         } else if (!containsOnlyLettersAndSpaces(firstName)) {
             // If the first name contains only letters and spaces, set the error message
-            setFirstNameError('First name can only contain letters');
+            setFirstNameError(t('clientForm.validation.firstNameLetters'));
             isValid = false;
         }
 
         // Last Name validation
         if (!lastName.trim()) {
-            setLastNameError('Last name is required');
+            setLastNameError(t('clientForm.validation.lastNameRequired'));
             isValid = false;
         } else if (containsEmoji(lastName)) {
-            setLastNameError('Last name cannot contain emojis');
+            setLastNameError(t('clientForm.validation.lastNameEmoji'));
             isValid = false;
         } else if (!containsOnlyLettersAndSpaces(lastName)) {
-            setLastNameError('Last name can only contain letters');
+            setLastNameError(t('clientForm.validation.lastNameLetters'));
             isValid = false;
         }
 
         // Email validation
         if (!email.trim()) {
-            setEmailError('Email is required');
+            setEmailError(t('clientForm.validation.emailRequired'));
             isValid = false;
         } else if (!isValidEmail(email)) {
-            setEmailError('Please enter a valid email address');
+            setEmailError(t('clientForm.validation.emailInvalid'));
             isValid = false;
         }
 
         // Phone validation
         if (!cellPhone.trim()) {
-            setPhoneError('Phone number is required');
+            setPhoneError(t('clientForm.validation.phoneRequired'));
             isValid = false;
         } else if (!isValidPhone(cellPhone)) {
-            setPhoneError('Please enter a valid 10-digit phone number');
+            setPhoneError(t('clientForm.validation.phoneInvalid'));
             isValid = false;
         }
 
         // Address validation
         if (!homeAddress.trim()) {
-            setAddressError('Address is required');
+            setAddressError(t('clientForm.validation.addressRequired'));
             isValid = false;
         } else if (containsEmoji(homeAddress)) {
-            setAddressError('Address cannot contain emojis');
+            setAddressError(t('clientForm.validation.addressEmoji'));
             isValid = false;
         } else if (!isValidAddress(homeAddress)) {
-            setAddressError('Please enter a valid address');
+            setAddressError(t('clientForm.validation.addressInvalid'));
             isValid = false;
         }
 
@@ -171,40 +174,40 @@ export default function NewClientForm() {
 
         // Pet name validation
         if (!petName.trim()) {
-            setPetNameError('Pet name is required');
+            setPetNameError(t('clientForm.validation.petNameRequired'));
             isValid = false;
         } else if (containsEmoji(petName)) {
-            setPetNameError('Pet name cannot contain emojis');
+            setPetNameError(t('clientForm.validation.petNameEmoji'));
             isValid = false;
         }
 
         // Color validation
         if (!color.trim()) {
-            setColorError('Color is required');
+            setColorError(t('clientForm.validation.colorRequired'));
             isValid = false;
         }
 
         // Species validation
         if (!selectSpecies) {
-            setSpeciesError('Species is required');
+            setSpeciesError(t('clientForm.validation.speciesRequired'));
             isValid = false;
         }
 
         // Breed validation
         if (!breed.trim()) {
-            setBreedError('Breed is required');
+            setBreedError(t('clientForm.validation.breedRequired'));
             isValid = false;
         }
 
         // Birth date validation
         if (!birthDate) {
-            setBirthDateError('Birth date is required');
+            setBirthDateError(t('clientForm.validation.birthDateRequired'));
             isValid = false;
         }
 
         // Sex validation
         if (!sex) {
-            setSexError('Sex is required');
+            setSexError(t('clientForm.validation.sexRequired'));
             isValid = false;
         }
 
@@ -221,21 +224,39 @@ export default function NewClientForm() {
 
         // Spayed or neutered validation
         if (!spayedOrNeutered) {
-            setSpayedNeuteredError('Please select yes, no, or unknown');
+            setSpayedNeuteredError(
+                t('clientForm.validation.spayedNeuteredRequired')
+            );
             isValid = false;
         }
 
         // Microchip status validation
         if (!microchipStatus) {
-            setMicrochipError('Please select yes, no, or unknown');
+            setMicrochipError(t('clientForm.validation.microchipRequired'));
             isValid = false;
+        } else if (microchipStatus === 'Yes') {
+            // If user selected "Yes", they must provide a valid microchip number
+            if (microchip.length === 0) {
+                setMicrochipError(t('clientForm.validation.microchipNumber'));
+                isValid = false;
+            } else if (!containsOnlyNumbers(microchip)) {
+                setMicrochipError(
+                    t('clientForm.validation.microchipNumbersOnly')
+                );
+                isValid = false;
+            } else if (
+                microchip.length !== 9 &&
+                microchip.length !== 10 &&
+                microchip.length !== 15
+            ) {
+                setMicrochipError(t('clientForm.validation.microchipNumber'));
+                isValid = false;
+            }
         }
 
         // Initials validation
         if (!initials.trim()) {
-            setInitialsError(
-                'Please enter your initials to agree to the terms'
-            );
+            setInitialsError(t('clientForm.validation.initialsRequired'));
             isValid = false;
         }
 
@@ -331,7 +352,7 @@ export default function NewClientForm() {
 
         try {
             const responseMessage = await submitClientFormData(formData);
-            Alert.alert('Success', responseMessage);
+            Alert.alert('Success', t('clientForm.successMessage'));
 
             // Reset form fields
             setFirstName('');
@@ -363,7 +384,10 @@ export default function NewClientForm() {
             setCurrentPage(0); // Reset to the first page
             scrollViewRef.current?.scrollTo({ x: 0, animated: true });
         } catch (error: any) {
-            Alert.alert('Error', `Failed to submit data: ${error.message}`);
+            Alert.alert(
+                'Error',
+                `${t('clientForm.errorMessage')} ${error.message}`
+            );
         }
     };
 
@@ -558,7 +582,9 @@ export default function NewClientForm() {
                             style={styles.navButton}
                             onPress={prevPage}
                         >
-                            <Text style={styles.navButtonText}>Back</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('clientForm.back')}
+                            </Text>
                         </TouchableOpacity>
                     ) : (
                         <View style={styles.navButtonPlaceholder} />
@@ -575,14 +601,18 @@ export default function NewClientForm() {
                             style={styles.navButton}
                             onPress={nextPage}
                         >
-                            <Text style={styles.navButtonText}>Next</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('clientForm.next')}
+                            </Text>
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity
                             style={[styles.navButton, styles.submitButton]}
                             onPress={handleSubmit}
                         >
-                            <Text style={styles.navButtonText}>Submit</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('clientForm.submit')}
+                            </Text>
                         </TouchableOpacity>
                     )}
                 </View>

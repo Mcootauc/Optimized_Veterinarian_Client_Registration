@@ -14,9 +14,11 @@ import {
     Inter_300Light,
     Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
+import { useLanguage } from './hooks/useLanguage';
 
 export default function Index() {
     const router = useRouter();
+    const { t, switchLanguage } = useLanguage();
 
     const [fontsLoaded] = useFonts({
         Inter_300Light,
@@ -39,7 +41,9 @@ export default function Index() {
                 style={[styles.button, styles.primaryButton]}
                 onPress={() => router.push('/screens/NewClientForm')}
             >
-                <Text style={styles.buttonText}>New Client Registration</Text>
+                <Text style={styles.buttonText}>
+                    {t('home.newClientRegistration')}
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -47,12 +51,21 @@ export default function Index() {
                 onPress={() => router.push('/screens/NewPetForm')}
                 disabled={true}
             >
-                <Text style={styles.buttonText}>New Pet Registration</Text>
+                <Text style={styles.buttonText}>
+                    {t('home.newPetRegistration')}
+                </Text>
             </TouchableOpacity>
 
-            <Text style={styles.footer}>
-                © 2025 Mitchell Cootauco. All rights reserved.
-            </Text>
+            <TouchableOpacity
+                style={[styles.button, styles.languageButton]}
+                onPress={switchLanguage}
+            >
+                <Text style={styles.buttonText}>
+                    {t('home.languageSwitch')}
+                </Text>
+            </TouchableOpacity>
+
+            <Text style={styles.footer}>{t('home.footer')}</Text>
         </View>
     );
 }
@@ -83,6 +96,10 @@ const styles = StyleSheet.create({
     },
     secondaryButton: {
         backgroundColor: Colors.gray,
+    },
+    languageButton: {
+        backgroundColor: Colors.steelBlue,
+        height: 50,
     },
     buttonText: {
         fontFamily: 'Inter_600SemiBold',

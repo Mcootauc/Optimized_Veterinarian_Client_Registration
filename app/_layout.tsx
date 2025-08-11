@@ -6,12 +6,19 @@ import {
     Inter_700Bold,
     useFonts,
 } from '@expo-google-fonts/inter';
+import { useEffect } from 'react';
+import { initializeLanguage } from './i18n';
 
 export default function RootLayout() {
     const [fontsLoaded] = useFonts({
         Inter_400Regular,
         Inter_700Bold,
     });
+
+    // Initialize i18n language on app start
+    useEffect(() => {
+        initializeLanguage();
+    }, []);
 
     if (!fontsLoaded) {
         return null;

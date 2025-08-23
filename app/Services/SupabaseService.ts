@@ -57,9 +57,9 @@ export const submitPetFormData = async (formData: any) => {
             hospital_id: 1, // TODO: change to the hospital id to specify which hospital the client is from
         };
 
-        const { error } = await supabase.rpc('create_client', { payload });
+        const { error } = await supabase.rpc('create_pet', { payload });
         if (error) throw error;
-        return 'Successfully submitted! Thank you!';
+        return 'Successfully submitted pet information! Thank you!';
     } catch (error: any) {
         console.error('Error submitting pet form:', error);
         throw error;

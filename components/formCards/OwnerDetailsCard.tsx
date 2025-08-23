@@ -27,17 +27,19 @@ interface OwnerDetailsCardProps {
     setCellPhone: (val: string) => void;
     phoneError: string;
     setPhoneError: (val: string) => void;
-    homeAddress: string;
-    setHomeAddress: (val: string) => void;
-    setStreet: (val: string) => void;
-    setCity: (val: string) => void;
-    setState: (val: string) => void;
-    setZipCode: (val: string) => void;
-    addressError: string;
-    setAddressError: (val: string) => void;
-    isAddressFocused: boolean;
-    setIsAddressFocused: (val: boolean) => void;
-    googlePlacesRef: React.RefObject<GooglePlacesAutocompleteRef>;
+    // Address section is optional
+    showAddress?: boolean;
+    homeAddress?: string;
+    setHomeAddress?: (val: string) => void;
+    setStreet?: (val: string) => void;
+    setCity?: (val: string) => void;
+    setState?: (val: string) => void;
+    setZipCode?: (val: string) => void;
+    addressError?: string;
+    setAddressError?: (val: string) => void;
+    isAddressFocused?: boolean;
+    setIsAddressFocused?: (val: boolean) => void;
+    googlePlacesRef?: React.RefObject<GooglePlacesAutocompleteRef>;
     hasError: boolean;
     width: number;
     dividerColor: string;
@@ -60,6 +62,7 @@ const OwnerDetailsCard = ({
     setCellPhone,
     phoneError,
     setPhoneError,
+    showAddress,
     homeAddress,
     setHomeAddress,
     setStreet,
@@ -75,6 +78,7 @@ const OwnerDetailsCard = ({
     width,
     dividerColor,
 }: OwnerDetailsCardProps) => {
+    const hasAddress = showAddress !== false;
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
@@ -84,7 +88,7 @@ const OwnerDetailsCard = ({
                     width={2}
                     orientation="horizontal"
                 />
-                {!isAddressFocused && (
+                {(!hasAddress || !isAddressFocused) && (
                     <View
                         style={{
                             flexDirection: 'row',
@@ -116,7 +120,7 @@ const OwnerDetailsCard = ({
                         </View>
                     </View>
                 )}
-                {!isAddressFocused && (
+                {(!hasAddress || !isAddressFocused) && (
                     <View>
                         <InputField
                             placeholder="Email"
@@ -129,7 +133,7 @@ const OwnerDetailsCard = ({
                         />
                     </View>
                 )}
-                {!isAddressFocused && (
+                {(!hasAddress || !isAddressFocused) && (
                     <View>
                         <InputField
                             placeholder="Phone Number e.g. 6265551212"
@@ -142,170 +146,174 @@ const OwnerDetailsCard = ({
                         />
                     </View>
                 )}
-                <View
-                    style={{
-                        marginBottom: isAddressFocused
-                            ? 190
-                            : addressError
-                            ? 25 // Additional space for error text (25px base + ~30px for error text)
-                            : 15,
-                        position: 'relative',
-                    }}
-                >
-                    <GooglePlacesAutocomplete
-                        ref={googlePlacesRef}
-                        fetchDetails={true}
-                        minLength={1}
-                        debounce={120}
-                        placeholder="Address"
-                        enablePoweredByContainer={false}
-                        disableScroll={true}
-                        onFail={(error) =>
-                            console.error('Google Places error:', error)
-                        }
-                        onNotFound={() =>
-                            console.log('Google Places: no results found')
-                        }
-                        onTimeout={() =>
-                            console.log('Google Places: request timed out')
-                        }
-                        timeout={20000}
-                        textInputProps={{
-                            placeholderTextColor: 'gray',
-                            returnKeyType: 'search',
-                            blurOnSubmit: false,
-                            autoCorrect: false,
-                            autoCapitalize: 'none',
-                            onFocus: () => {
-                                setIsAddressFocused(true);
-                                setTimeout(() => {}, 200);
-                            },
-                            onBlur: () => {
-                                setIsAddressFocused(false);
-                            },
+                {hasAddress && (
+                    <View
+                        style={{
+                            marginBottom: isAddressFocused
+                                ? 190
+                                : addressError
+                                ? 25 // Additional space for error text (25px base + ~30px for error text)
+                                : 15,
+                            position: 'relative',
                         }}
-                        listViewDisplayed={true}
-                        keyboardShouldPersistTaps="handled"
-                        renderRightButton={() => (
-                            <TouchableOpacity
-                                style={[
-                                    styles.clearButton,
-                                    !homeAddress && styles.clearButtonDisabled,
-                                ]}
-                                disabled={!homeAddress}
-                                onPress={() => {
-                                    if (googlePlacesRef.current) {
-                                        googlePlacesRef.current.clear();
-                                        setHomeAddress('');
-                                        setStreet('');
-                                        setCity('');
-                                        setState('');
-                                        setZipCode('');
-                                        setAddressError('');
-                                    }
-                                }}
-                            >
-                                <Text
+                    >
+                        <GooglePlacesAutocomplete
+                            ref={googlePlacesRef}
+                            fetchDetails={true}
+                            minLength={1}
+                            debounce={120}
+                            placeholder="Address"
+                            enablePoweredByContainer={false}
+                            disableScroll={true}
+                            onFail={(error) =>
+                                console.error('Google Places error:', error)
+                            }
+                            onNotFound={() =>
+                                console.log('Google Places: no results found')
+                            }
+                            onTimeout={() =>
+                                console.log('Google Places: request timed out')
+                            }
+                            timeout={20000}
+                            textInputProps={{
+                                placeholderTextColor: 'gray',
+                                returnKeyType: 'search',
+                                blurOnSubmit: false,
+                                autoCorrect: false,
+                                autoCapitalize: 'none',
+                                onFocus: () => {
+                                    setIsAddressFocused &&
+                                        setIsAddressFocused(true);
+                                    setTimeout(() => {}, 200);
+                                },
+                                onBlur: () => {
+                                    setIsAddressFocused &&
+                                        setIsAddressFocused(false);
+                                },
+                            }}
+                            listViewDisplayed={true}
+                            keyboardShouldPersistTaps="handled"
+                            renderRightButton={() => (
+                                <TouchableOpacity
                                     style={[
-                                        styles.clearButtonText,
+                                        styles.clearButton,
                                         !homeAddress &&
-                                            styles.clearButtonTextDisabled,
+                                            styles.clearButtonDisabled,
                                     ]}
+                                    disabled={!homeAddress}
+                                    onPress={() => {
+                                        if (
+                                            googlePlacesRef &&
+                                            googlePlacesRef.current
+                                        ) {
+                                            googlePlacesRef.current.clear();
+                                            setHomeAddress &&
+                                                setHomeAddress('');
+                                            setStreet && setStreet('');
+                                            setCity && setCity('');
+                                            setState && setState('');
+                                            setZipCode && setZipCode('');
+                                            setAddressError &&
+                                                setAddressError('');
+                                        }
+                                    }}
                                 >
-                                    Clear
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                        styles={{
-                            container: {
-                                zIndex: 1,
-                            },
-                            textInput: {
-                                height: 35,
-                                fontSize: 12,
-                                fontFamily: 'Inter_400Regular',
-                                borderWidth: 1,
-                                borderColor: addressError
-                                    ? Colors.red
-                                    : Colors.borderColor,
-                                borderRadius: 6,
-                                paddingLeft: 10,
-                                paddingRight: 48, // Add padding for clear button
-                                backgroundColor: Colors.white,
-                            },
-                            listView: {
-                                borderWidth: 1,
-                                borderColor: Colors.borderColor,
-                                backgroundColor: Colors.white,
-                                margin: 0,
-                                fontSize: 12,
-                                maxHeight: 304,
-                                position: 'absolute', // Make the list view absolute
-                                width: '100%',
-                                top: 34, // Updated to account for the taller input height
-                                zIndex: 1000, // Ensure it's above other content
-                            },
-                            row: {
-                                padding: 10,
-                                height: 35,
-                                fontSize: 12,
-                                fontFamily: 'Inter_400Regular',
-                            },
-                            description: {
-                                fontFamily: 'Inter_400Regular',
-                                fontSize: 12,
-                            },
-                        }}
-                        query={{
-                            key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
-                            language: 'en',
-                        }}
-                        onPress={(data, details = null) => {
-                            console.log('Started!');
-                            const components = details?.address_components;
-                            const getComponent = (type: string) =>
-                                components?.find((c) =>
-                                    c.types.includes(type as PlaceType)
-                                )?.long_name ?? '';
-                            const streetNumber = getComponent('street_number');
-                            const route = getComponent('route');
+                                    <Text
+                                        style={[
+                                            styles.clearButtonText,
+                                            !homeAddress &&
+                                                styles.clearButtonTextDisabled,
+                                        ]}
+                                    >
+                                        Clear
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            styles={{
+                                container: {
+                                    zIndex: 1,
+                                },
+                                textInput: {
+                                    height: 35,
+                                    fontSize: 12,
+                                    fontFamily: 'Inter_400Regular',
+                                    borderWidth: 1,
+                                    borderColor: addressError
+                                        ? Colors.red
+                                        : Colors.borderColor,
+                                    borderRadius: 6,
+                                    paddingLeft: 10,
+                                    paddingRight: 48, // Add padding for clear button
+                                    backgroundColor: Colors.white,
+                                },
+                                listView: {
+                                    borderWidth: 1,
+                                    borderColor: Colors.borderColor,
+                                    backgroundColor: Colors.white,
+                                    margin: 0,
+                                    fontSize: 12,
+                                    maxHeight: 304,
+                                    position: 'absolute', // Make the list view absolute
+                                    width: '100%',
+                                    top: 34, // Updated to account for the taller input height
+                                    zIndex: 1000, // Ensure it's above other content
+                                },
+                                row: {
+                                    padding: 10,
+                                    height: 35,
+                                    fontSize: 12,
+                                    fontFamily: 'Inter_400Regular',
+                                },
+                                description: {
+                                    fontFamily: 'Inter_400Regular',
+                                    fontSize: 12,
+                                },
+                            }}
+                            query={{
+                                key: process.env
+                                    .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                                language: 'en',
+                            }}
+                            onPress={(data, details = null) => {
+                                const components = details?.address_components;
+                                const getComponent = (type: string) =>
+                                    components?.find((c) =>
+                                        c.types.includes(type as PlaceType)
+                                    )?.long_name ?? '';
+                                const streetNumber =
+                                    getComponent('street_number');
+                                const route = getComponent('route');
 
-                            const fullStreet =
-                                `${streetNumber} ${route}`.trim();
-                            setStreet(fullStreet);
-                            setHomeAddress(data.description);
-                            setCity(getComponent('locality'));
-                            setState(
-                                getComponent('administrative_area_level_1')
-                            );
-                            setZipCode(getComponent('postal_code'));
-                            console.log('FULL STREET', fullStreet);
-                            console.log('CITY', getComponent('locality'));
-                            console.log(
-                                'STATE',
-                                getComponent('administrative_area_level_1')
-                            );
-                            console.log(
-                                'ZIP CODE',
-                                getComponent('postal_code')
-                            );
-                            // Add this line to hide the suggestions after selection
-                            // setIsAddressSearchActive(false);
-                        }}
-                        nearbyPlacesAPI="GooglePlacesSearch"
-                        filterReverseGeocodingByTypes={[
-                            'locality',
-                            'administrative_area_level_1',
-                        ]}
-                    />
-                    {addressError ? (
-                        <View style={styles.addressErrorContainer}>
-                            <Text style={styles.addressErrorText}>
-                                {addressError}
-                            </Text>
-                        </View>
-                    ) : null}
-                </View>
+                                const fullStreet =
+                                    `${streetNumber} ${route}`.trim();
+                                setStreet && setStreet(fullStreet);
+                                setHomeAddress &&
+                                    setHomeAddress(data.description);
+                                setCity && setCity(getComponent('locality'));
+                                setState &&
+                                    setState(
+                                        getComponent(
+                                            'administrative_area_level_1'
+                                        )
+                                    );
+                                setZipCode &&
+                                    setZipCode(getComponent('postal_code'));
+                            }}
+                            nearbyPlacesAPI="GooglePlacesSearch"
+                            filterReverseGeocodingByTypes={[
+                                'locality',
+                                'administrative_area_level_1',
+                            ]}
+                        />
+                        {addressError ? (
+                            <View style={styles.addressErrorContainer}>
+                                <Text style={styles.addressErrorText}>
+                                    {addressError}
+                                </Text>
+                            </View>
+                        ) : null}
+                    </View>
+                )}
             </View>
         </CardContainer>
     );

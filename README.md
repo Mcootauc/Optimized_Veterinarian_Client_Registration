@@ -29,3 +29,5 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
     Install and run the dev client on an emulator/device
     npx expo run:android
+
+    Uninstall the apk file

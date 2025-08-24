@@ -45,7 +45,6 @@ export default function Index() {
             <TouchableOpacity
                 style={[styles.button, styles.secondaryButton]}
                 onPress={() => router.push('/screens/NewPetForm')}
-                disabled={true}
             >
                 <Text style={styles.buttonText}>New Pet Registration</Text>
             </TouchableOpacity>
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.darkBlue,
     },
     secondaryButton: {
-        backgroundColor: Colors.gray,
+        backgroundColor: Colors.steelBlue,
     },
     buttonText: {
         fontFamily: 'Inter_600SemiBold',

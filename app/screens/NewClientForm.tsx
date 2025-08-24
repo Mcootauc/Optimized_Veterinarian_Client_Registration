@@ -23,7 +23,7 @@ import {
     isValidPhone,
     isValidEmail,
 } from '../ErrorCheck';
-import { submitFormData } from '../Services/SupabaseService';
+import { submitClientFormData } from '../Services/SupabaseService';
 import {
     GooglePlacesAutocomplete,
     GooglePlacesAutocompleteRef,
@@ -308,15 +308,9 @@ export default function NewClientForm() {
             return;
         }
 
-        // Generate the timestamp when the form is submitted
-        const timestamp = new Date().toLocaleString('en-US', {
-            timeZone: 'America/Los_Angeles',
-        });
-
         const ownerName = `${firstName} ${lastName}`;
 
         const formData = {
-            timestamp,
             ownerName,
             street,
             city,
@@ -331,12 +325,12 @@ export default function NewClientForm() {
             sex,
             spayedOrNeutered,
             color,
-            microchip: microchipStatus === 'Yes' ? microchip : microchipStatus,
+            microchip: microchipStatus,
             initials,
         };
 
         try {
-            const responseMessage = await submitFormData(formData);
+            const responseMessage = await submitClientFormData(formData);
             Alert.alert('Success', responseMessage);
 
             // Reset form fields

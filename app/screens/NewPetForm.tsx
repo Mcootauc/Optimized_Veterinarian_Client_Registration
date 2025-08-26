@@ -37,8 +37,10 @@ import PetDetailsCard from '@/components/formCards/PetDetailsCard';
 import StatusCard from '@/components/formCards/StatusCard';
 import Terms from '@/components/formCards/Terms';
 import AssistanceText from '@/components/formComponents/AssistanceText';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function NewPetForm() {
+    const { t } = useLanguage();
     // Form fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -108,45 +110,45 @@ export default function NewPetForm() {
         // First Name validation
         if (!firstName.trim()) {
             // If the first name is empty, set the error message
-            setFirstNameError('First name is required');
+            setFirstNameError(t('firstNameRequired'));
             isValid = false;
         } else if (containsEmoji(firstName)) {
             // If the first name contains an emoji, set the error message
-            setFirstNameError('First name cannot contain emojis');
+            setFirstNameError(t('firstNameNoEmojis'));
             isValid = false;
         } else if (!containsOnlyLettersAndSpaces(firstName)) {
             // If the first name contains only letters and spaces, set the error message
-            setFirstNameError('First name can only contain letters');
+            setFirstNameError(t('firstNameLettersOnly'));
             isValid = false;
         }
 
         // Last Name validation
         if (!lastName.trim()) {
-            setLastNameError('Last name is required');
+            setLastNameError(t('lastNameRequired'));
             isValid = false;
         } else if (containsEmoji(lastName)) {
-            setLastNameError('Last name cannot contain emojis');
+            setLastNameError(t('lastNameNoEmojis'));
             isValid = false;
         } else if (!containsOnlyLettersAndSpaces(lastName)) {
-            setLastNameError('Last name can only contain letters');
+            setLastNameError(t('lastNameLettersOnly'));
             isValid = false;
         }
 
         // Email validation
         if (!email.trim()) {
-            setEmailError('Email is required');
+            setEmailError(t('emailRequired'));
             isValid = false;
         } else if (!isValidEmail(email)) {
-            setEmailError('Please enter a valid email address');
+            setEmailError(t('emailInvalid'));
             isValid = false;
         }
 
         // Phone validation
         if (!cellPhone.trim()) {
-            setPhoneError('Phone number is required');
+            setPhoneError(t('phoneRequired'));
             isValid = false;
         } else if (!isValidPhone(cellPhone)) {
-            setPhoneError('Please enter a valid 10-digit phone number');
+            setPhoneError(t('phoneInvalid'));
             isValid = false;
         }
 
@@ -154,40 +156,40 @@ export default function NewPetForm() {
 
         // Pet name validation
         if (!petName.trim()) {
-            setPetNameError('Pet name is required');
+            setPetNameError(t('petNameRequired'));
             isValid = false;
         } else if (containsEmoji(petName)) {
-            setPetNameError('Pet name cannot contain emojis');
+            setPetNameError(t('petNameNoEmojis'));
             isValid = false;
         }
 
         // Color validation
         if (!color.trim()) {
-            setColorError('Color is required');
+            setColorError(t('colorRequired'));
             isValid = false;
         }
 
         // Species validation
         if (!selectSpecies) {
-            setSpeciesError('Species is required');
+            setSpeciesError(t('speciesRequired'));
             isValid = false;
         }
 
         // Breed validation
         if (!breed.trim()) {
-            setBreedError('Breed is required');
+            setBreedError(t('breedRequired'));
             isValid = false;
         }
 
         // Birth date validation
         if (!birthDate) {
-            setBirthDateError('Birth date is required');
+            setBirthDateError(t('birthDateRequired'));
             isValid = false;
         }
 
         // Sex validation
         if (!sex) {
-            setSexError('Sex is required');
+            setSexError(t('sexRequired'));
             isValid = false;
         }
 
@@ -363,7 +365,10 @@ export default function NewPetForm() {
             setCurrentPage(0); // Reset to the first page
             scrollViewRef.current?.scrollTo({ x: 0, animated: true });
         } catch (error: any) {
-            Alert.alert('Error', `Failed to submit data: ${error.message}`);
+            Alert.alert(
+                t('submitError'),
+                `${t('submitErrorMessage')}: ${error.message}`
+            );
         }
     };
 
@@ -548,7 +553,9 @@ export default function NewPetForm() {
                             style={styles.navButton}
                             onPress={prevPage}
                         >
-                            <Text style={styles.navButtonText}>Back</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('back')}
+                            </Text>
                         </TouchableOpacity>
                     ) : (
                         <View style={styles.navButtonPlaceholder} />
@@ -565,14 +572,18 @@ export default function NewPetForm() {
                             style={styles.navButton}
                             onPress={nextPage}
                         >
-                            <Text style={styles.navButtonText}>Next</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('next')}
+                            </Text>
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity
                             style={[styles.navButton, styles.submitButton]}
                             onPress={handleSubmit}
                         >
-                            <Text style={styles.navButtonText}>Submit</Text>
+                            <Text style={styles.navButtonText}>
+                                {t('submit')}
+                            </Text>
                         </TouchableOpacity>
                     )}
                 </View>

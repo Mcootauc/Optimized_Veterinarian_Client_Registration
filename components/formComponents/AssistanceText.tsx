@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function AssistanceText({
     width,
@@ -8,19 +9,26 @@ export default function AssistanceText({
     width: number;
     color: string | undefined;
 }) {
+    const { t } = useLanguage();
+
     return (
         <View style={[styles.assistanceText, { width: width }]}>
             <Text style={styles.assistanceTextBase}>
-                If you have any questions, please ask the{' '}
+                {t('assistanceText')}{' '}
             </Text>
             <Text style={[styles.assistanceTextHighlight, { color: color }]}>
-                front desk
+                {t('frontDesk')}
             </Text>
-            <Text style={styles.assistanceTextBase}> or any available </Text>
+            <Text style={styles.assistanceTextBase}>
+                {' '}
+                {t('assistanceTextOr')}{' '}
+            </Text>
             <Text style={[styles.assistanceTextHighlight, { color: color }]}>
-                vet technician
+                {t('vetTechnician')}
             </Text>
-            <Text style={styles.assistanceTextBase}>!</Text>
+            <Text style={styles.assistanceTextBase}>
+                {t('assistanceTextEnd')}
+            </Text>
         </View>
     );
 }

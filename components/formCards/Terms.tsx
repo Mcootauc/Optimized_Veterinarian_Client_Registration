@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Divider from '@/components/Divider';
 import CardContainer from '@/components/cardContainer';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Terms({
     initials,
@@ -20,35 +21,24 @@ export default function Terms({
     hasError: boolean;
     dividerColor: string;
 }) {
+    const { t } = useLanguage();
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 80 }]}>
-                <Text style={styles.pageTitle}>Terms</Text>
+                <Text style={styles.pageTitle}>{t('terms')}</Text>
                 <Divider
                     color={dividerColor}
                     width={2}
                     orientation="horizontal"
                 />
-                <Text style={styles.terms}>
-                    All fees are due and payable prior to the release of the
-                    patient. Upon your request, we can provide you with a
-                    written estimate of fees for any treatments, emergency care,
-                    surgery, or hospitalization services to be performed.
-                </Text>
-                <Text style={styles.terms}>
-                    You understand and approve all necessary after-office-hours
-                    veterinary services that may be performed on your pet in the
-                    judgment of the veterinarian. You are also aware that the
-                    continuous presence of veterinary personnel may not be
-                    provided after office hours as this is not a 24-hour
-                    facility.
-                </Text>
+                <Text style={styles.terms}>{t('termsText1')}</Text>
+                <Text style={styles.terms}>{t('termsText2')}</Text>
                 <TextInput
                     style={[
                         styles.input,
                         initialsError ? styles.inputError : null,
                     ]}
-                    placeholder="Enter your initials"
+                    placeholder={t('enterInitials')}
                     value={initials}
                     onChangeText={(text) => {
                         setInitials(text);

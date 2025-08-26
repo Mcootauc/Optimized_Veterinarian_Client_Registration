@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Colors } from '@/constants/Colors';
 import {
     View,
-    TextInput,
     Alert,
     StyleSheet,
     ScrollView,
@@ -19,19 +18,11 @@ import {
     containsEmoji,
     containsOnlyLettersAndSpaces,
     containsOnlyNumbers,
-    isValidAddress,
     isValidPhone,
     isValidEmail,
 } from '../ErrorCheck';
 import { submitPetFormData } from '../Services/SupabaseService';
-import {
-    GooglePlacesAutocomplete,
-    GooglePlacesAutocompleteRef,
-    PlaceType,
-} from 'react-native-google-places-autocomplete';
 import 'react-native-get-random-values';
-import CardContainer from '@/components/cardContainer';
-import { useRouter } from 'expo-router';
 import OwnerDetailsCard from '@/components/formCards/OwnerDetailsCard';
 import PetDetailsCard from '@/components/formCards/PetDetailsCard';
 import StatusCard from '@/components/formCards/StatusCard';
@@ -54,9 +45,6 @@ export default function NewPetForm() {
     const [microchip, setMicrochip] = useState('');
     const [initials, setInitials] = useState('');
 
-    // Add state to track if address field is focused
-    const [isAddressFocused, setIsAddressFocused] = useState(false);
-
     // Navigation state for multi-page form (pages: 0 to 3)
     const [currentPage, setCurrentPage] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
@@ -65,7 +53,7 @@ export default function NewPetForm() {
     // Add error states for page 1
     const [firstNameError, setFirstNameError] = useState('');
     const [lastNameError, setLastNameError] = useState('');
-    const [addressError, setAddressError] = useState('');
+
     // Page 2 errors
     const [phoneError, setPhoneError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -98,7 +86,6 @@ export default function NewPetForm() {
         setLastNameError('');
         setEmailError('');
         setPhoneError('');
-        setAddressError('');
         // Reset pet details error states too
         setPetNameError('');
         setColorError('');
@@ -304,9 +291,6 @@ export default function NewPetForm() {
         }
     };
 
-    // Add a ref to the GooglePlacesAutocomplete component
-    const googlePlacesRef = useRef<GooglePlacesAutocompleteRef>(null!);
-
     // Update handleSubmit to validate before submitting
     const handleSubmit = async () => {
         if (!validatePage2()) {
@@ -356,12 +340,6 @@ export default function NewPetForm() {
             setMicrochipStatus('');
             setInitials('');
 
-            // Reset the Google Places Autocomplete
-            if (googlePlacesRef.current) {
-                googlePlacesRef.current.clear();
-                googlePlacesRef.current.blur();
-            }
-
             setCurrentPage(0); // Reset to the first page
             scrollViewRef.current?.scrollTo({ x: 0, animated: true });
         } catch (error: any) {
@@ -385,8 +363,7 @@ export default function NewPetForm() {
         firstNameError ||
         lastNameError ||
         emailError ||
-        phoneError ||
-        addressError
+        phoneError
     );
 
     const petDetailsCardHasError = !!(

@@ -9,6 +9,7 @@ import {
     GooglePlacesAutocompleteRef,
     PlaceType,
 } from 'react-native-google-places-autocomplete';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface OwnerDetailsCardProps {
     firstName: string;
@@ -78,11 +79,12 @@ const OwnerDetailsCard = ({
     width,
     dividerColor,
 }: OwnerDetailsCardProps) => {
+    const { t } = useLanguage();
     const hasAddress = showAddress !== false;
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
-                <Text style={styles.pageTitle}>Owner Details</Text>
+                <Text style={styles.pageTitle}>{t('ownerDetails')}</Text>
                 <Divider
                     color={dividerColor}
                     width={2}
@@ -98,7 +100,7 @@ const OwnerDetailsCard = ({
                     >
                         <View style={{ flex: 1, minWidth: 0 }}>
                             <InputField
-                                placeholder="First Name"
+                                placeholder={t('firstName')}
                                 value={firstName}
                                 onChangeText={(t) => {
                                     setFirstName(t);
@@ -109,7 +111,7 @@ const OwnerDetailsCard = ({
                         </View>
                         <View style={{ flex: 1, minWidth: 0 }}>
                             <InputField
-                                placeholder="Last Name"
+                                placeholder={t('lastName')}
                                 value={lastName}
                                 onChangeText={(t) => {
                                     setLastName(t);
@@ -123,7 +125,7 @@ const OwnerDetailsCard = ({
                 {(!hasAddress || !isAddressFocused) && (
                     <View>
                         <InputField
-                            placeholder="Email"
+                            placeholder={t('email')}
                             value={email}
                             onChangeText={(t) => {
                                 setEmail(t);
@@ -136,7 +138,7 @@ const OwnerDetailsCard = ({
                 {(!hasAddress || !isAddressFocused) && (
                     <View>
                         <InputField
-                            placeholder="Phone Number e.g. 6265551212"
+                            placeholder={t('phoneNumber')}
                             value={cellPhone}
                             onChangeText={(t) => {
                                 setCellPhone(t);
@@ -162,7 +164,7 @@ const OwnerDetailsCard = ({
                             fetchDetails={true}
                             minLength={1}
                             debounce={120}
-                            placeholder="Address"
+                            placeholder={t('address')}
                             enablePoweredByContainer={false}
                             disableScroll={true}
                             onFail={(error) =>
@@ -225,7 +227,7 @@ const OwnerDetailsCard = ({
                                                 styles.clearButtonTextDisabled,
                                         ]}
                                     >
-                                        Clear
+                                        {t('clear')}
                                     </Text>
                                 </TouchableOpacity>
                             )}

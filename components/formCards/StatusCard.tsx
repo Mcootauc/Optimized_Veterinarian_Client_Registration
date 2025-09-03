@@ -9,6 +9,7 @@ import {
 import { Colors } from '@/constants/Colors';
 import CardContainer from '@/components/cardContainer';
 import Divider from '@/components/Divider';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface StatusCardProps {
     spayedOrNeutered: string;
@@ -37,10 +38,11 @@ const StatusCard = ({
     width,
     dividerColor,
 }: StatusCardProps) => {
+    const { t } = useLanguage();
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 80 }]}>
-                <Text style={styles.pageTitle}>Status</Text>
+                <Text style={styles.pageTitle}>{t('status')}</Text>
                 <Divider
                     color={dividerColor}
                     width={2}
@@ -50,7 +52,9 @@ const StatusCard = ({
                 <View style={styles.section}>
                     <View style={styles.gridRow}>
                         <View style={styles.labelColumn}>
-                            <Text style={styles.label}>Spayed/Neutered?</Text>
+                            <Text style={styles.label}>
+                                {t('spayedNeutered')}
+                            </Text>
                         </View>
                         <View style={styles.buttonsColumn}>
                             <TouchableOpacity
@@ -69,7 +73,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    Yes
+                                    {t('yes')}
                                 </Text>
                             </TouchableOpacity>
 
@@ -89,7 +93,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    No
+                                    {t('no')}
                                 </Text>
                             </TouchableOpacity>
 
@@ -109,7 +113,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    Unknown
+                                    {t('unknown')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -125,7 +129,7 @@ const StatusCard = ({
                 <View style={styles.section}>
                     <View style={styles.gridRow}>
                         <View style={styles.labelColumn}>
-                            <Text style={styles.label}>Microchip?</Text>
+                            <Text style={styles.label}>{t('microchip')}</Text>
                         </View>
                         <View style={styles.buttonsColumn}>
                             <TouchableOpacity
@@ -144,7 +148,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    Yes
+                                    {t('yes')}
                                 </Text>
                             </TouchableOpacity>
 
@@ -164,7 +168,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    No
+                                    {t('no')}
                                 </Text>
                             </TouchableOpacity>
 
@@ -184,7 +188,7 @@ const StatusCard = ({
                                             : styles.unselectedText,
                                     ]}
                                 >
-                                    Unknown
+                                    {t('unknown')}
                                 </Text>
                             </TouchableOpacity>
                         </View>

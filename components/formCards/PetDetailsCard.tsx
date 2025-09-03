@@ -7,6 +7,7 @@ import InputField from '@/components/formComponents/InputField';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface PetDetailsCardProps {
     petName: string;
@@ -75,10 +76,11 @@ const PetDetailsCard = ({
     width,
     dividerColor,
 }: PetDetailsCardProps) => {
+    const { t } = useLanguage();
     return (
         <CardContainer hasError={hasError} paddingBottom={5}>
             <View style={[styles.container, { width: width - 70 }]}>
-                <Text style={styles.pageTitle}>Pet Details</Text>
+                <Text style={styles.pageTitle}>{t('petDetails')}</Text>
                 <Divider
                     color={dividerColor}
                     width={2}
@@ -92,7 +94,7 @@ const PetDetailsCard = ({
                 >
                     <View style={{ flex: 1 }}>
                         <InputField
-                            placeholder="Pet Name"
+                            placeholder={t('petName')}
                             value={petName}
                             onChangeText={(t) => {
                                 setPetName(t);
@@ -103,7 +105,7 @@ const PetDetailsCard = ({
                     </View>
                     <View style={{ flex: 1 }}>
                         <InputField
-                            placeholder="Color"
+                            placeholder={t('color')}
                             value={color}
                             onChangeText={(t) => {
                                 setColor(t);
@@ -146,7 +148,7 @@ const PetDetailsCard = ({
                                 }}
                                 useNativeAndroidPickerStyle={false} // let us style Android too
                                 placeholder={{
-                                    label: 'Species',
+                                    label: t('species'),
                                 }}
                                 value={selectSpecies}
                                 onValueChange={(value) => {
@@ -155,15 +157,15 @@ const PetDetailsCard = ({
                                 }}
                                 items={[
                                     {
-                                        label: 'Dog',
+                                        label: t('dog'),
                                         value: 'Dog',
                                     },
                                     {
-                                        label: 'Cat',
+                                        label: t('cat'),
                                         value: 'Cat',
                                     },
                                     {
-                                        label: 'Other',
+                                        label: t('other'),
                                         value: 'Other',
                                     },
                                 ]}
@@ -189,7 +191,7 @@ const PetDetailsCard = ({
                     <View style={{ flex: 1 }}>
                         <InputField
                             error={breedError}
-                            placeholder="Breed"
+                            placeholder={t('breed')}
                             value={breed}
                             onChangeText={(text) => {
                                 setBreed(text);
@@ -225,7 +227,7 @@ const PetDetailsCard = ({
                             >
                                 {birthDate
                                     ? formatDate(birthDate)
-                                    : 'Select Birth Date'}
+                                    : t('selectBirthDate')}
                             </Text>
                         </TouchableOpacity>
                         <FontAwesome
@@ -282,7 +284,7 @@ const PetDetailsCard = ({
                                 }}
                                 useNativeAndroidPickerStyle={false} // let us style Android too
                                 placeholder={{
-                                    label: 'Sex',
+                                    label: t('sex'),
                                 }}
                                 value={sex}
                                 onValueChange={(value) => {
@@ -291,15 +293,15 @@ const PetDetailsCard = ({
                                 }}
                                 items={[
                                     {
-                                        label: 'Male',
+                                        label: t('male'),
                                         value: 'Male',
                                     },
                                     {
-                                        label: 'Female',
+                                        label: t('female'),
                                         value: 'Female',
                                     },
                                     {
-                                        label: 'Unknown',
+                                        label: t('unknown'),
                                         value: 'Unknown',
                                     },
                                 ]}

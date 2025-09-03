@@ -14,9 +14,12 @@ import {
     Inter_300Light,
     Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageToggle } from '../components/LanguageToggle';
 
 export default function Index() {
     const router = useRouter();
+    const { t } = useLanguage();
 
     const [fontsLoaded] = useFonts({
         Inter_300Light,
@@ -29,6 +32,10 @@ export default function Index() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.languageToggleContainer}>
+                <LanguageToggle />
+            </View>
+
             <Image
                 source={require('./images/homepageImage.png')}
                 style={styles.image}
@@ -39,19 +46,19 @@ export default function Index() {
                 style={[styles.button, styles.primaryButton]}
                 onPress={() => router.push('/screens/NewClientForm')}
             >
-                <Text style={styles.buttonText}>New Client Registration</Text>
+                <Text style={styles.buttonText}>
+                    {t('newClientRegistration')}
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
                 style={[styles.button, styles.secondaryButton]}
                 onPress={() => router.push('/screens/NewPetForm')}
             >
-                <Text style={styles.buttonText}>New Pet Registration</Text>
+                <Text style={styles.buttonText}>{t('newPetRegistration')}</Text>
             </TouchableOpacity>
 
-            <Text style={styles.footer}>
-                © 2025 OVIForm. All rights reserved.
-            </Text>
+            <Text style={styles.footer}>{t('copyright')}</Text>
         </View>
     );
 }
@@ -64,6 +71,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-evenly',
         paddingVertical: 20,
+    },
+    languageToggleContainer: {
+        position: 'absolute',
+        top: 60,
+        right: 20,
+        zIndex: 1,
     },
     image: {
         width: '75%',

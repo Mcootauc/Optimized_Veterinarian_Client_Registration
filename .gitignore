@@ -56,3 +56,4 @@ yarn-error.*
 
 .expo/devices.json
 expo-env.d.ts
+.expo/

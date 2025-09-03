@@ -50,7 +50,7 @@ export default function Index() {
             </TouchableOpacity>
 
             <Text style={styles.footer}>
-                © 2025 Mitchell Cootauco. All rights reserved.
+                © 2025 OVIForm. All rights reserved.
             </Text>
         </View>
     );

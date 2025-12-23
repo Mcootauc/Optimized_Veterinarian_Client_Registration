@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import CardContainer from '@/components/cardContainer';
 import Divider from '@/components/Divider';
@@ -8,6 +8,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { pickerSelectStyles, styles } from './styles/PetDetailsCard.styles';
 
 interface PetDetailsCardProps {
     petName: string;
@@ -86,13 +87,8 @@ const PetDetailsCard = ({
                     width={2}
                     orientation="horizontal"
                 />
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        gap: 8,
-                    }}
-                >
-                    <View style={{ flex: 1 }}>
+                <View style={styles.row}>
+                    <View style={styles.col}>
                         <InputField
                             placeholder={t('petName')}
                             value={petName}
@@ -103,7 +99,7 @@ const PetDetailsCard = ({
                             error={petNameError}
                         />
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={styles.col}>
                         <InputField
                             placeholder={t('color')}
                             value={color}
@@ -115,13 +111,8 @@ const PetDetailsCard = ({
                         />
                     </View>
                 </View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        gap: 8,
-                    }}
-                >
-                    <View style={{ flex: 1 }}>
+                <View style={styles.row}>
+                    <View style={styles.col}>
                         <View
                             style={[
                                 styles.pickerContainer,
@@ -129,23 +120,7 @@ const PetDetailsCard = ({
                             ]}
                         >
                             <RNPickerSelect
-                                style={{
-                                    inputAndroid: {
-                                        fontSize: 12,
-                                        fontFamily: 'Inter_400Regular',
-                                        paddingVertical: 0,
-                                        paddingHorizontal: 0,
-                                        paddingLeft: 10,
-                                        color: Colors.black,
-                                    },
-                                    placeholder: {
-                                        color: Colors.gray,
-                                        paddingLeft: 10,
-                                        fontSize: 12,
-                                        fontFamily: 'Inter_400Regular',
-                                    },
-                                    // No need for viewContainer styling when we're wrapping it
-                                }}
+                                style={pickerSelectStyles}
                                 useNativeAndroidPickerStyle={false} // let us style Android too
                                 placeholder={{
                                     label: t('species'),
@@ -174,11 +149,7 @@ const PetDetailsCard = ({
                                 name="chevron-down"
                                 size={12}
                                 color={Colors.gray}
-                                style={{
-                                    position: 'absolute',
-                                    right: 10,
-                                    top: 10,
-                                }}
+                                style={styles.chevronIcon}
                             />
                         </View>
 
@@ -188,7 +159,7 @@ const PetDetailsCard = ({
                             </Text>
                         ) : null}
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={styles.col}>
                         <InputField
                             error={breedError}
                             placeholder={t('breed')}
@@ -204,13 +175,8 @@ const PetDetailsCard = ({
                         />
                     </View>
                 </View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        gap: 8,
-                    }}
-                >
-                    <View style={{ flex: 1 }}>
+                <View style={styles.row}>
+                    <View style={styles.col}>
                         <TouchableOpacity
                             style={[
                                 styles.input,
@@ -234,11 +200,7 @@ const PetDetailsCard = ({
                             name="chevron-down"
                             size={12}
                             color={Colors.gray}
-                            style={{
-                                position: 'absolute',
-                                right: 10,
-                                top: 10,
-                            }}
+                            style={styles.chevronIcon}
                         />
                         {birthDateError ? (
                             <Text style={styles.birthDateErrorText}>
@@ -257,7 +219,7 @@ const PetDetailsCard = ({
                             />
                         )}
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={styles.col}>
                         <View
                             style={[
                                 styles.pickerContainer,
@@ -265,23 +227,7 @@ const PetDetailsCard = ({
                             ]}
                         >
                             <RNPickerSelect
-                                style={{
-                                    inputAndroid: {
-                                        fontSize: 12,
-                                        fontFamily: 'Inter_400Regular',
-                                        paddingVertical: 0,
-                                        paddingHorizontal: 0,
-                                        paddingLeft: 10,
-                                        color: Colors.black,
-                                    },
-                                    placeholder: {
-                                        color: Colors.gray,
-                                        paddingLeft: 10,
-                                        fontSize: 12,
-                                        fontFamily: 'Inter_400Regular',
-                                    },
-                                    // No need for viewContainer styling when we're wrapping it
-                                }}
+                                style={pickerSelectStyles}
                                 useNativeAndroidPickerStyle={false} // let us style Android too
                                 placeholder={{
                                     label: t('sex'),
@@ -310,11 +256,7 @@ const PetDetailsCard = ({
                                 name="chevron-down"
                                 size={12}
                                 color={Colors.gray}
-                                style={{
-                                    position: 'absolute',
-                                    right: 10,
-                                    top: 10,
-                                }}
+                                style={styles.chevronIcon}
                             />
                         </View>
 
@@ -329,71 +271,5 @@ const PetDetailsCard = ({
         </CardContainer>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        padding: 10,
-        paddingVertical: 15,
-        marginBottom: 0,
-    },
-    pageTitle: {
-        fontSize: 16,
-        fontFamily: 'Inter_500Medium',
-        color: Colors.black,
-    },
-    input: {
-        width: '100%',
-        height: 35,
-        borderColor: Colors.borderColor,
-        borderWidth: 1,
-        borderRadius: 6,
-        paddingLeft: 10,
-        fontFamily: 'Inter_400Regular',
-        fontSize: 12,
-    },
-    inputError: {
-        borderColor: Colors.red,
-        borderWidth: 1,
-    },
-    dateButton: {
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        paddingTop: 0,
-    },
-    dateButtonText: {
-        color: Colors.black,
-        fontFamily: 'Inter_400Regular',
-        fontSize: 12,
-        paddingLeft: 0,
-    },
-    dateButtonPlaceholder: {
-        color: Colors.gray,
-    },
-    selectErrorText: {
-        color: Colors.red,
-        fontSize: 8,
-        marginTop: 4,
-        marginLeft: 5,
-        marginBottom: 0,
-        fontFamily: 'Inter_600SemiBold',
-    },
-    birthDateErrorText: {
-        color: Colors.red,
-        fontSize: 8,
-        marginTop: 4,
-        marginLeft: 5,
-        marginBottom: 0,
-        fontFamily: 'Inter_600SemiBold',
-    },
-    pickerContainer: {
-        borderWidth: 1,
-        borderColor: Colors.borderColor,
-        borderRadius: 6,
-        marginBottom: 0,
-        height: 35,
-        justifyContent: 'center',
-    },
-});
 
 export default PetDetailsCard;

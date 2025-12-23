@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import CardContainer from '@/components/cardContainer';
@@ -9,6 +9,7 @@ import {
     GooglePlacesAutocompleteRef,
     PlaceType,
 } from 'react-native-google-places-autocomplete';
+import { styles } from './styles/OwnerDetailsCard.styles';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface OwnerDetailsCardProps {
@@ -81,6 +82,36 @@ const OwnerDetailsCard = ({
 }: OwnerDetailsCardProps) => {
     const { t } = useLanguage();
     const hasAddress = showAddress !== false;
+
+    const googlePlacesStyles = useMemo(() => {
+        const borderColor = addressError ? Colors.red : Colors.borderColor;
+
+        return {
+            container: { zIndex: 1 },
+            textInput: StyleSheet.flatten([
+                styles.gpTextInput,
+                { borderColor },
+            ]),
+            listView: styles.gpListView,
+            row: styles.gpRow,
+            description: styles.gpDescription,
+        };
+    }, [addressError]);
+
+    const addressWrapStyle = useMemo(() => {
+        const marginBottom = isAddressFocused
+            ? 190
+            : addressError
+            ? 25 // Additional space for error text (25px base + ~30px for error text)
+            : 15;
+
+        return StyleSheet.flatten([styles.addressWrapBase, { marginBottom }]);
+    }, [isAddressFocused, addressError]);
+
+    const getComponent = (components: any, type: string) =>
+        components?.find((c: any) => c.types.includes(type as PlaceType))
+            ?.long_name ?? '';
+
     return (
         <CardContainer hasError={hasError} paddingBottom={0}>
             <View style={[styles.container, { width: width - 70 }]}>
@@ -91,14 +122,8 @@ const OwnerDetailsCard = ({
                     orientation="horizontal"
                 />
                 {(!hasAddress || !isAddressFocused) && (
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            gap: 8,
-                            width: '100%',
-                        }}
-                    >
-                        <View style={{ flex: 1, minWidth: 0 }}>
+                    <View style={styles.nameRow}>
+                        <View style={styles.nameCol}>
                             <InputField
                                 placeholder={t('firstName')}
                                 value={firstName}
@@ -109,7 +134,7 @@ const OwnerDetailsCard = ({
                                 error={firstNameError}
                             />
                         </View>
-                        <View style={{ flex: 1, minWidth: 0 }}>
+                        <View style={styles.nameCol}>
                             <InputField
                                 placeholder={t('lastName')}
                                 value={lastName}
@@ -149,18 +174,10 @@ const OwnerDetailsCard = ({
                     </View>
                 )}
                 {hasAddress && (
-                    <View
-                        style={{
-                            marginBottom: isAddressFocused
-                                ? 190
-                                : addressError
-                                ? 25 // Additional space for error text (25px base + ~30px for error text)
-                                : 15,
-                            position: 'relative',
-                        }}
-                    >
+                    <View style={addressWrapStyle}>
                         <GooglePlacesAutocomplete
                             ref={googlePlacesRef}
+                            styles={googlePlacesStyles}
                             fetchDetails={true}
                             minLength={1}
                             debounce={120}
@@ -231,46 +248,6 @@ const OwnerDetailsCard = ({
                                     </Text>
                                 </TouchableOpacity>
                             )}
-                            styles={{
-                                container: {
-                                    zIndex: 1,
-                                },
-                                textInput: {
-                                    height: 35,
-                                    fontSize: 12,
-                                    fontFamily: 'Inter_400Regular',
-                                    borderWidth: 1,
-                                    borderColor: addressError
-                                        ? Colors.red
-                                        : Colors.borderColor,
-                                    borderRadius: 6,
-                                    paddingLeft: 10,
-                                    paddingRight: 48, // Add padding for clear button
-                                    backgroundColor: Colors.white,
-                                },
-                                listView: {
-                                    borderWidth: 1,
-                                    borderColor: Colors.borderColor,
-                                    backgroundColor: Colors.white,
-                                    margin: 0,
-                                    fontSize: 12,
-                                    maxHeight: 304,
-                                    position: 'absolute', // Make the list view absolute
-                                    width: '100%',
-                                    top: 34, // Updated to account for the taller input height
-                                    zIndex: 1000, // Ensure it's above other content
-                                },
-                                row: {
-                                    padding: 10,
-                                    height: 35,
-                                    fontSize: 12,
-                                    fontFamily: 'Inter_400Regular',
-                                },
-                                description: {
-                                    fontFamily: 'Inter_400Regular',
-                                    fontSize: 12,
-                                },
-                            }}
                             query={{
                                 key: process.env
                                     .EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
@@ -278,28 +255,32 @@ const OwnerDetailsCard = ({
                             }}
                             onPress={(data, details = null) => {
                                 const components = details?.address_components;
-                                const getComponent = (type: string) =>
-                                    components?.find((c) =>
-                                        c.types.includes(type as PlaceType)
-                                    )?.long_name ?? '';
-                                const streetNumber =
-                                    getComponent('street_number');
-                                const route = getComponent('route');
+                                const streetNumber = getComponent(
+                                    components,
+                                    'street_number'
+                                );
+                                const route = getComponent(components, 'route');
 
                                 const fullStreet =
                                     `${streetNumber} ${route}`.trim();
                                 setStreet && setStreet(fullStreet);
                                 setHomeAddress &&
                                     setHomeAddress(data.description);
-                                setCity && setCity(getComponent('locality'));
+                                setCity &&
+                                    setCity(
+                                        getComponent(components, 'locality')
+                                    );
                                 setState &&
                                     setState(
                                         getComponent(
+                                            components,
                                             'administrative_area_level_1'
                                         )
                                     );
                                 setZipCode &&
-                                    setZipCode(getComponent('postal_code'));
+                                    setZipCode(
+                                        getComponent(components, 'postal_code')
+                                    );
                             }}
                             nearbyPlacesAPI="GooglePlacesSearch"
                             filterReverseGeocodingByTypes={[
@@ -320,52 +301,5 @@ const OwnerDetailsCard = ({
         </CardContainer>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        padding: 10,
-        paddingVertical: 0,
-        marginTop: 15,
-    },
-    pageTitle: {
-        fontSize: 16,
-        fontFamily: 'Inter_500Medium',
-        color: Colors.black,
-    },
-    addressErrorText: {
-        color: Colors.red,
-        fontSize: 8,
-        fontFamily: 'Inter_600SemiBold',
-    },
-    addressErrorContainer: {
-        position: 'absolute',
-        top: 40, // Position it below the input (70px height + 10px spacing)
-        left: 0,
-        right: 0,
-        paddingLeft: 5,
-    },
-    clearButton: {
-        position: 'absolute',
-        right: 5,
-        top: 8,
-        paddingVertical: 3,
-        paddingHorizontal: 7,
-        backgroundColor: Colors.blue,
-        borderRadius: 6,
-        zIndex: 2,
-    },
-    clearButtonText: {
-        color: Colors.white,
-        fontSize: 8,
-        fontFamily: 'Inter_700Bold',
-    },
-    clearButtonDisabled: {
-        backgroundColor: Colors.gray,
-    },
-    clearButtonTextDisabled: {
-        color: Colors.borderColor,
-    },
-});
 
 export default OwnerDetailsCard;

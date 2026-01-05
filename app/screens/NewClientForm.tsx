@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Colors } from '@/constants/Colors';
 import {
     View,
-    TextInput,
     Alert,
     StyleSheet,
     ScrollView,
@@ -18,20 +17,13 @@ import {
 import {
     containsEmoji,
     containsOnlyLettersAndSpaces,
-    containsOnlyNumbers,
     isValidAddress,
     isValidPhone,
     isValidEmail,
 } from '../ErrorCheck';
 import { submitClientFormData } from '../Services/SupabaseService';
-import {
-    GooglePlacesAutocomplete,
-    GooglePlacesAutocompleteRef,
-    PlaceType,
-} from 'react-native-google-places-autocomplete';
+import { GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete';
 import 'react-native-get-random-values';
-import CardContainer from '@/components/cardContainer';
-import { useRouter } from 'expo-router';
 import OwnerDetailsCard from '@/components/formCards/OwnerDetailsCard';
 import PetDetailsCard from '@/components/formCards/PetDetailsCard';
 import StatusCard from '@/components/formCards/StatusCard';
@@ -456,43 +448,59 @@ export default function NewClientForm() {
                                 width={width}
                                 dividerColor={Colors.darkBlue}
                             />
-                            <PetDetailsCard
-                                petName={petName}
-                                setPetName={setPetName}
-                                petNameError={petNameError}
-                                setPetNameError={setPetNameError}
-                                color={color}
-                                setColor={setColor}
-                                colorError={colorError}
-                                setColorError={setColorError}
-                                selectSpecies={selectSpecies}
-                                setSelectSpecies={setSelectSpecies}
-                                speciesError={speciesError}
-                                setSpeciesError={setSpeciesError}
-                                breed={breed}
-                                setBreed={setBreed}
-                                breedError={breedError}
-                                setBreedError={setBreedError}
-                                birthDate={birthDate}
-                                setBirthDate={setBirthDate}
-                                birthDateError={birthDateError}
-                                setBirthDateError={setBirthDateError}
-                                showDatePicker={showDatePicker}
-                                setShowDatePicker={setShowDatePicker}
-                                sex={sex}
-                                setSex={setSex}
-                                sexError={sexError}
-                                setSexError={setSexError}
-                                formatDate={formatDate}
-                                onDateChange={onDateChange}
-                                hasError={petDetailsCardHasError}
-                                width={width}
-                                dividerColor={Colors.darkBlue}
-                            />
-                            <AssistanceText
-                                width={width}
-                                color={Colors.darkBlue}
-                            />
+                            <View
+                                style={{
+                                    position: 'relative',
+                                    zIndex: 10,
+                                    elevation: 10,
+                                }}
+                            >
+                                <PetDetailsCard
+                                    petName={petName}
+                                    setPetName={setPetName}
+                                    petNameError={petNameError}
+                                    setPetNameError={setPetNameError}
+                                    color={color}
+                                    setColor={setColor}
+                                    colorError={colorError}
+                                    setColorError={setColorError}
+                                    selectSpecies={selectSpecies}
+                                    setSelectSpecies={setSelectSpecies}
+                                    speciesError={speciesError}
+                                    setSpeciesError={setSpeciesError}
+                                    breed={breed}
+                                    setBreed={setBreed}
+                                    breedError={breedError}
+                                    setBreedError={setBreedError}
+                                    birthDate={birthDate}
+                                    setBirthDate={setBirthDate}
+                                    birthDateError={birthDateError}
+                                    setBirthDateError={setBirthDateError}
+                                    showDatePicker={showDatePicker}
+                                    setShowDatePicker={setShowDatePicker}
+                                    sex={sex}
+                                    setSex={setSex}
+                                    sexError={sexError}
+                                    setSexError={setSexError}
+                                    formatDate={formatDate}
+                                    onDateChange={onDateChange}
+                                    hasError={petDetailsCardHasError}
+                                    width={width}
+                                    dividerColor={Colors.darkBlue}
+                                />
+                            </View>
+                            <View
+                                style={{
+                                    position: 'relative',
+                                    zIndex: 0,
+                                    elevation: 0,
+                                }}
+                            >
+                                <AssistanceText
+                                    width={width}
+                                    color={Colors.darkBlue}
+                                />
+                            </View>
                         </View>
                     </ScrollView>
                 );

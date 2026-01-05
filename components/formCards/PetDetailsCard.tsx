@@ -9,6 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { pickerSelectStyles, styles } from './styles/PetDetailsCard.styles';
+import BreedAutocompleteField from '../formComponents/BreedAutocompleteField';
 
 interface PetDetailsCardProps {
     petName: string;
@@ -129,6 +130,8 @@ const PetDetailsCard = ({
                                 onValueChange={(value) => {
                                     setSelectSpecies(value);
                                     setSpeciesError('');
+                                    setBreed('');
+                                    setBreedError('');
                                 }}
                                 items={[
                                     {
@@ -160,14 +163,16 @@ const PetDetailsCard = ({
                         ) : null}
                     </View>
                     <View style={styles.col}>
-                        <InputField
-                            error={breedError}
+                        <BreedAutocompleteField
                             placeholder={t('breed')}
+                            uiSpecies={selectSpecies}
                             value={breed}
                             onChangeText={(text) => {
                                 setBreed(text);
                                 setBreedError('');
                             }}
+                            error={breedError}
+                            onClearError={() => setBreedError('')}
                             editable={
                                 selectSpecies === 'Dog' ||
                                 selectSpecies === 'Cat'

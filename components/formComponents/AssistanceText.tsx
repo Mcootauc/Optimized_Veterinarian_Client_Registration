@@ -13,6 +13,20 @@ export default function AssistanceText({
 
     return (
         <View style={[styles.assistanceText, { width: width }]}>
+            <View style={{ paddingBottom: 10, width: '100%' }}>
+                <Text style={styles.assistanceTextBase}>
+                    {t('unknownText')}{' '}
+                    <Text
+                        style={[
+                            styles.assistanceTextHighlight,
+                            { color: color },
+                        ]}
+                    >
+                        '{t('unknownOption')}'
+                    </Text>
+                </Text>
+            </View>
+
             <Text style={styles.assistanceTextBase}>
                 {t('assistanceText')}{' '}
             </Text>

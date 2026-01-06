@@ -30,6 +30,11 @@
     "female": "Female",
     "unknown": "Unknown",
 
+    "secondaryContact": "Secondary Contact",
+    "secondaryContactFirstName": "First Name",
+    "secondaryContactLastName": "Last Name",
+    "secondaryContactPhoneNumber": "Phone Number",
+
     "spayedNeutered": "Spayed/Neutered?",
     "microchip": "Microchip?",
     "yes": "Yes",
@@ -43,6 +48,8 @@
     "next": "Next",
     "submit": "Submit",
 
+    "unknownText": "If you are unsure, please input",
+    "unknownOption": "Unknown",
     "assistanceText": "If you have any questions, please ask the",
     "frontDesk": "front desk",
     "assistanceTextOr": "or any available",

@@ -497,10 +497,6 @@ export default function NewPetForm() {
                                 hasError={termsCardHasError}
                                 dividerColor={Colors.steelBlue}
                             />
-                            <AssistanceText
-                                width={width}
-                                color={Colors.steelBlue}
-                            />
                         </View>
                     </ScrollView>
                 );

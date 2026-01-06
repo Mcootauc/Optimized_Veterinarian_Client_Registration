@@ -30,6 +30,7 @@ import StatusCard from '@/components/formCards/StatusCard';
 import Terms from '@/components/formCards/Terms';
 import AssistanceText from '@/components/formComponents/AssistanceText';
 import { useLanguage } from '../../contexts/LanguageContext';
+import SecondaryContact from '@/components/formCards/SecondaryContact';
 
 export default function NewClientForm() {
     const { t } = useLanguage();
@@ -51,6 +52,11 @@ export default function NewClientForm() {
     const [microchip, setMicrochip] = useState('');
     const [initials, setInitials] = useState('');
 
+    // Secondary contact fields
+    const [contactFirstName, setContactFirstName] = useState('');
+    const [contactLastName, setContactLastName] = useState('');
+    const [contactCellPhone, setContactCellPhone] = useState('');
+
     // Add state to track if address field is focused
     const [isAddressFocused, setIsAddressFocused] = useState(false);
 
@@ -59,20 +65,22 @@ export default function NewClientForm() {
     const scrollViewRef = useRef<ScrollView>(null);
     const { width } = useWindowDimensions(); // Get the width of the screen for the transition animation
 
-    // Add error states for page 1
+    // Page 1 errors
     const [firstNameError, setFirstNameError] = useState('');
     const [lastNameError, setLastNameError] = useState('');
     const [addressError, setAddressError] = useState('');
-    // Page 2 errors
     const [phoneError, setPhoneError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [petNameError, setPetNameError] = useState('');
-    // Page 3 errors
     const [speciesError, setSpeciesError] = useState('');
     const [breedError, setBreedError] = useState('');
     const [birthDateError, setBirthDateError] = useState('');
     const [colorError, setColorError] = useState('');
-    // Page 4 errors
+
+    // Page 2 errors
+    const [contactFirstNameError, setContactFirstNameError] = useState('');
+    const [contactLastNameError, setContactLastNameError] = useState('');
+    const [contactCellPhoneError, setContactCellPhoneError] = useState('');
     const [sexError, setSexError] = useState('');
     const [spayedNeuteredError, setSpayedNeuteredError] = useState('');
     const [microchipError, setMicrochipError] = useState('');
@@ -209,9 +217,48 @@ export default function NewClientForm() {
         let isValid = true;
 
         // Reset errors
+        setContactFirstNameError('');
+        setContactLastNameError('');
+        setContactCellPhoneError('');
         setSpayedNeuteredError('');
         setMicrochipError('');
         setInitialsError('');
+
+        // First Name validation
+        if (!contactFirstName.trim()) {
+            // If the first name is empty, set the error message
+            setContactFirstNameError(t('firstNameRequired'));
+            isValid = false;
+        } else if (containsEmoji(firstName)) {
+            // If the first name contains an emoji, set the error message
+            setContactFirstNameError(t('firstNameNoEmojis'));
+            isValid = false;
+        } else if (!containsOnlyLettersAndSpaces(firstName)) {
+            // If the first name contains only letters and spaces, set the error message
+            setContactFirstNameError(t('firstNameLettersOnly'));
+            isValid = false;
+        }
+
+        // Last Name validation
+        if (!contactLastName.trim()) {
+            setContactLastNameError(t('lastNameRequired'));
+            isValid = false;
+        } else if (containsEmoji(lastName)) {
+            setContactLastNameError(t('lastNameNoEmojis'));
+            isValid = false;
+        } else if (!containsOnlyLettersAndSpaces(lastName)) {
+            setContactLastNameError(t('lastNameLettersOnly'));
+            isValid = false;
+        }
+
+        // Phone validation
+        if (!contactCellPhone.trim()) {
+            setContactCellPhoneError(t('phoneRequired'));
+            isValid = false;
+        } else if (!isValidPhone(contactCellPhone)) {
+            setContactCellPhoneError(t('phoneInvalid'));
+            isValid = false;
+        }
 
         // Spayed or neutered validation
         if (!spayedOrNeutered) {
@@ -390,6 +437,12 @@ export default function NewClientForm() {
         sexError
     );
 
+    const secondaryContactHasError = !!(
+        contactFirstNameError ||
+        contactLastNameError ||
+        contactCellPhoneError
+    );
+
     const statusCardHasError = !!(spayedNeuteredError || microchipError);
 
     const termsCardHasError = !!initialsError;
@@ -516,6 +569,29 @@ export default function NewClientForm() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View style={{ marginTop: 40, gap: 40 }}>
+                            <SecondaryContact
+                                contactFirstName={contactFirstName}
+                                setContactFirstName={setContactFirstName}
+                                contactFirstNameError={contactFirstNameError}
+                                setContactFirstNameError={
+                                    setContactFirstNameError
+                                }
+                                contactLastName={contactLastName}
+                                setContactLastName={setContactLastName}
+                                contactLastNameError={contactLastNameError}
+                                setContactLastNameError={
+                                    setContactLastNameError
+                                }
+                                contactCellPhone={contactCellPhone}
+                                setContactCellPhone={setContactCellPhone}
+                                contactCellPhoneError={contactCellPhoneError}
+                                setContactCellPhoneError={
+                                    setContactCellPhoneError
+                                }
+                                width={width}
+                                hasError={secondaryContactHasError}
+                                dividerColor={Colors.darkBlue}
+                            />
                             <StatusCard
                                 spayedOrNeutered={spayedOrNeutered}
                                 setSpayedOrNeutered={setSpayedOrNeutered}
@@ -537,10 +613,6 @@ export default function NewClientForm() {
                                 width={width}
                                 hasError={termsCardHasError}
                                 dividerColor={Colors.darkBlue}
-                            />
-                            <AssistanceText
-                                width={width}
-                                color={Colors.darkBlue}
                             />
                         </View>
                     </ScrollView>

@@ -18,7 +18,6 @@ interface InputFieldProps {
     error?: string;
     secureTextEntry?: boolean;
     keyboardType?: TextInputProps['keyboardType'];
-    editable?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({

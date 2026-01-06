@@ -65,3 +65,69 @@ export const submitPetFormData = async (formData: any) => {
         throw error;
     }
 };
+
+// types you can reuse in UI
+export type BreedSuggestion = { label: string; value: string };
+
+function speciesToDbSpecies(uiSpecies: string): 'Canine' | 'Feline' | null {
+    if (uiSpecies === 'Dog') return 'Canine';
+    if (uiSpecies === 'Cat') return 'Feline';
+    return null;
+}
+
+export async function searchBreedsTop5(params: {
+    uiSpecies: string; // 'Dog' | 'Cat' | ...
+    query: string;
+}): Promise<BreedSuggestion[]> {
+    const dbSpecies = speciesToDbSpecies(params.uiSpecies);
+    const q = params.query.trim(); // trim the query to remove any leading or trailing whitespace
+
+    if (!dbSpecies) return [];
+    if (q.length < 2) return [];
+
+    // 1) prefix-first
+    const prefixPattern = `${q}%`;
+
+    const { data: prefixRows, error: prefixErr } = await supabase
+        .from('breeds')
+        .select('name')
+        .eq('species', dbSpecies)
+        .ilike('name', prefixPattern) // ilike is case-insensitive like
+        .order('name', { ascending: true })
+        .limit(5);
+
+    if (prefixErr) throw prefixErr;
+
+    const prefix = (prefixRows ?? []).map((r) => r.name);
+    if (prefix.length >= 5) {
+        return prefix.slice(0, 5).map((name) => ({ label: name, value: name }));
+    }
+
+    // 2) fallback contains to fill remaining slots (optional but nice)
+    const remaining = 5 - prefix.length;
+    const containsPattern = `%${q}%`;
+
+    const { data: containsRows, error: containsErr } = await supabase
+        .from('breeds')
+        .select('name')
+        .eq('species', dbSpecies)
+        .ilike('name', containsPattern)
+        .order('name', { ascending: true })
+        .limit(10); // grab a few extra; we'll dedupe + take remaining
+
+    if (containsErr) throw containsErr;
+
+    const contains = (containsRows ?? []).map((r) => r.name);
+
+    // de-dupe while preserving order
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const name of [...prefix, ...contains]) {
+        if (seen.has(name)) continue;
+        seen.add(name);
+        out.push(name);
+        if (out.length === 5) break;
+    }
+
+    return out.map((name) => ({ label: name, value: name }));
+}

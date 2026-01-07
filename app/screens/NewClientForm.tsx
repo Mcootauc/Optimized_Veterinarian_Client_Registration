@@ -20,6 +20,7 @@ import {
     isValidAddress,
     isValidPhone,
     isValidEmail,
+    containsOnlyNumbers,
 } from '../ErrorCheck';
 import { submitClientFormData } from '../Services/SupabaseService';
 import { GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete';
@@ -152,7 +153,10 @@ export default function NewClientForm() {
         if (!cellPhone.trim()) {
             setPhoneError(t('phoneRequired'));
             isValid = false;
-        } else if (!isValidPhone(cellPhone)) {
+        } else if (
+            !isValidPhone(cellPhone) ||
+            !containsOnlyNumbers(cellPhone)
+        ) {
             setPhoneError(t('phoneInvalid'));
             isValid = false;
         }
@@ -251,11 +255,14 @@ export default function NewClientForm() {
             isValid = false;
         }
 
-        // Phone validation
+        // Secondary contact phone validation
         if (!contactCellPhone.trim()) {
             setContactCellPhoneError(t('phoneRequired'));
             isValid = false;
-        } else if (!isValidPhone(contactCellPhone)) {
+        } else if (
+            !isValidPhone(contactCellPhone) ||
+            !containsOnlyNumbers(contactCellPhone)
+        ) {
             setContactCellPhoneError(t('phoneInvalid'));
             isValid = false;
         }
@@ -350,6 +357,7 @@ export default function NewClientForm() {
         }
 
         const ownerName = `${firstName} ${lastName}`;
+        const secondaryContactName = `${contactFirstName} ${contactLastName}`;
 
         const formData = {
             ownerName,
@@ -364,6 +372,8 @@ export default function NewClientForm() {
             breed,
             birthDate: birthDate?.toISOString(), // Send ISO string to Supabase
             sex,
+            secondaryContactName,
+            contactCellPhone,
             spayedOrNeutered,
             color,
             microchip: microchipStatus,
@@ -389,6 +399,9 @@ export default function NewClientForm() {
             setBreed('');
             setBirthDate(null);
             setSex('');
+            setContactFirstName('');
+            setContactLastName('');
+            setContactCellPhone('');
             setSpayedOrNeutered('');
             setColor('');
             setMicrochip('');

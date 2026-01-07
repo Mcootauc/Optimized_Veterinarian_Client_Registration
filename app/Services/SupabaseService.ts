@@ -22,6 +22,8 @@ export const submitClientFormData = async (formData: any) => {
             breed: formData.breed,
             birth_date: formData.birthDate, // ISO string
             sex: formData.sex,
+            secondary_contact_name: formData.secondaryContactName,
+            secondary_contact_cell_phone: formData.contactCellPhone,
             spayed_or_neutered: formData.spayedOrNeutered,
             color: formData.color,
             microchip: formData.microchip,

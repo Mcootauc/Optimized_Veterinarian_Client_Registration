@@ -229,39 +229,45 @@ export default function NewClientForm() {
         setInitialsError('');
 
         // First Name validation
-        if (!contactFirstName.trim()) {
+        if (contactFirstName && !contactFirstName.trim()) {
             // If the first name is empty, set the error message
             setContactFirstNameError(t('firstNameRequired'));
             isValid = false;
-        } else if (containsEmoji(firstName)) {
+        } else if (contactFirstName && containsEmoji(contactFirstName)) {
             // If the first name contains an emoji, set the error message
             setContactFirstNameError(t('firstNameNoEmojis'));
             isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(firstName)) {
+        } else if (
+            contactFirstName &&
+            !containsOnlyLettersAndSpaces(contactFirstName)
+        ) {
             // If the first name contains only letters and spaces, set the error message
             setContactFirstNameError(t('firstNameLettersOnly'));
             isValid = false;
         }
 
         // Last Name validation
-        if (!contactLastName.trim()) {
+        if (contactLastName && !contactLastName.trim()) {
             setContactLastNameError(t('lastNameRequired'));
             isValid = false;
-        } else if (containsEmoji(lastName)) {
+        } else if (contactLastName && containsEmoji(contactLastName)) {
             setContactLastNameError(t('lastNameNoEmojis'));
             isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(lastName)) {
+        } else if (
+            contactLastName &&
+            !containsOnlyLettersAndSpaces(contactLastName)
+        ) {
             setContactLastNameError(t('lastNameLettersOnly'));
             isValid = false;
         }
 
         // Secondary contact phone validation
-        if (!contactCellPhone.trim()) {
+        if (contactCellPhone && !contactCellPhone.trim()) {
             setContactCellPhoneError(t('phoneRequired'));
             isValid = false;
         } else if (
-            !isValidPhone(contactCellPhone) ||
-            !containsOnlyNumbers(contactCellPhone)
+            (contactCellPhone && !isValidPhone(contactCellPhone)) ||
+            (contactCellPhone && !containsOnlyNumbers(contactCellPhone))
         ) {
             setContactCellPhoneError(t('phoneInvalid'));
             isValid = false;
@@ -582,6 +588,19 @@ export default function NewClientForm() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View style={{ marginTop: 40, gap: 40 }}>
+                            <StatusCard
+                                spayedOrNeutered={spayedOrNeutered}
+                                setSpayedOrNeutered={setSpayedOrNeutered}
+                                microchipStatus={microchipStatus}
+                                setMicrochipStatus={setMicrochipStatus}
+                                microchip={microchip}
+                                setMicrochip={setMicrochip}
+                                spayedNeuteredError={spayedNeuteredError}
+                                microchipError={microchipError}
+                                hasError={statusCardHasError}
+                                width={width}
+                                dividerColor={Colors.darkBlue}
+                            />
                             <SecondaryContact
                                 contactFirstName={contactFirstName}
                                 setContactFirstName={setContactFirstName}
@@ -603,19 +622,6 @@ export default function NewClientForm() {
                                 }
                                 width={width}
                                 hasError={secondaryContactHasError}
-                                dividerColor={Colors.darkBlue}
-                            />
-                            <StatusCard
-                                spayedOrNeutered={spayedOrNeutered}
-                                setSpayedOrNeutered={setSpayedOrNeutered}
-                                microchipStatus={microchipStatus}
-                                setMicrochipStatus={setMicrochipStatus}
-                                microchip={microchip}
-                                setMicrochip={setMicrochip}
-                                spayedNeuteredError={spayedNeuteredError}
-                                microchipError={microchipError}
-                                hasError={statusCardHasError}
-                                width={width}
                                 dividerColor={Colors.darkBlue}
                             />
                             <Terms

@@ -30,10 +30,7 @@
     "female": "Female",
     "unknown": "Unknown",
 
-    "secondaryContact": "Secondary Contact",
-    "secondaryContactFirstName": "First Name",
-    "secondaryContactLastName": "Last Name",
-    "secondaryContactPhoneNumber": "Phone Number",
+    "secondaryContact": "Secondary Contact (Optional)",
 
     "spayedNeutered": "Spayed/Neutered?",
     "microchip": "Microchip?",

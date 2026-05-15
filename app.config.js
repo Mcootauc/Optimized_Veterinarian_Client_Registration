@@ -1,6 +1,9 @@
+const APP_VARIANT = process.env.APP_VARIANT ?? 'production';
+const IS_STAGING = APP_VARIANT === 'staging';
+
 export default {
     expo: {
-        name: 'OVCR',
+        name: IS_STAGING ? 'OVIForm (Staging)' : 'OVIForm',
         slug: 'ValleyVetKiosk',
         version: '1.0.0',
         orientation: 'portrait',
@@ -14,14 +17,14 @@ export default {
         },
         ios: {
             supportsTablet: true,
-            bundleIdentifier: 'com.mitchxcool.ValleyVetKiosk',
+            bundleIdentifier: IS_STAGING ? 'com.mitchxcool.ValleyVetKiosk.staging' : 'com.mitchxcool.ValleyVetKiosk',
         },
         android: {
             adaptiveIcon: {
                 foregroundImage: './assets/images/adaptive-icon.png',
                 backgroundColor: '#ffffff',
             },
-            package: 'com.mitchxcool.ValleyVetKiosk',
+            package: IS_STAGING ? 'com.mitchxcool.ValleyVetKiosk.staging' : 'com.mitchxcool.ValleyVetKiosk',
             permissions: ['ACCESS_FINE_LOCATION'],
         },
         web: {
@@ -38,8 +41,7 @@ export default {
                 origin: false,
             },
             extra: {
-                googlePlacesApiKey:
-                    process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                googlePlacesApiKey: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
             },
             eas: {
                 projectId: '58810248-3b21-4e46-b000-cd0ef968c56e',

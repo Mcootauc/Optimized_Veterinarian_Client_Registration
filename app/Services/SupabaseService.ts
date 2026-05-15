@@ -1,71 +1,120 @@
+import 'react-native-url-polyfill/auto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+import { uuid } from '@/lib/uuid';
 
-// Initialize Supabase client with hardcoded values for the frontend
-export const supabase = createClient(
-    process.env.EXPO_PUBLIC_SUPABASE_URL!, // assert Non-null
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY! // assert Non-null
-);
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const variant = process.env.EXPO_PUBLIC_APP_VARIANT ?? 'production';
 
-// Submit new client form data to Supabase
+// Initialize Supabase client
+export const supabase = createClient(url, key, {
+    auth: {
+        storage: AsyncStorage,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false,
+    },
+});
+
+if (__DEV__) {
+    console.log(`[supabase] variant=${variant} url=${url}`);
+}
+
+// Keep the old submit functions signature so things don't break until we refactor them
 export const submitClientFormData = async (formData: any) => {
-    try {
-        const payload = {
-            owner_name: formData.ownerName,
-            street: formData.street,
-            city: formData.city,
-            state: formData.state,
-            zip_code: formData.zipCode,
-            cell_phone: formData.cellPhone,
-            email: formData.email,
-            pet_name: formData.petName,
-            species: formData.selectSpecies,
-            breed: formData.breed,
-            birth_date: formData.birthDate, // ISO string
-            sex: formData.sex,
-            secondary_contact_name: formData.secondaryContactName,
-            secondary_contact_cell_phone: formData.contactCellPhone,
-            spayed_or_neutered: formData.spayedOrNeutered,
-            color: formData.color,
-            microchip: formData.microchip,
-            initials: formData.initials,
-            hospital_id: 1, // TODO: change to the hospital id to specify which hospital the client is from
-        };
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    if (!session)
+        throw new Error('Device not provisioned. Please contact staff.');
 
-        const { error } = await supabase.rpc('create_client', { payload });
-        if (error) throw error;
-        return 'Successfully submitted client information! Thank you!';
-    } catch (error: any) {
-        console.error('Error submitting client form:', error);
-        throw error;
-    }
+    const p_client = {
+        id: uuid(),
+        owner_name: formData.ownerName,
+        secondary_contact_name: formData.secondaryContactName || null,
+        secondary_contact_cell_phone: formData.contactCellPhone || null,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        zip_code: formData.zipCode,
+        cell_phone: formData.cellPhone,
+        email: formData.email,
+        initials: formData.initials,
+    };
+    const p_pet = {
+        id: uuid(),
+        pet_name: formData.petName,
+        species: formData.selectSpecies,
+        breed: formData.breed,
+        birth_date: formData.birthDate, // YYYY-MM-DD
+        sex: formData.sex,
+        spayed_or_neutered: formData.spayedOrNeutered,
+        color: formData.color,
+        microchip: formData.microchip,
+        initials: formData.initials,
+    };
+
+    const { data, error } = await supabase.rpc('create_client_with_pet', {
+        p_client,
+        p_pet,
+    });
+    if (error) throw error;
+    return 'Successfully submitted client information! Thank you!';
 };
 
-// Submit new pet form data to Supabase
-export const submitPetFormData = async (formData: any) => {
-    try {
-        const payload = {
-            owner_name: formData.ownerName,
-            cell_phone: formData.cellPhone,
-            email: formData.email,
-            pet_name: formData.petName,
-            species: formData.selectSpecies,
-            breed: formData.breed,
-            birth_date: formData.birthDate, // ISO string
-            sex: formData.sex,
-            spayed_or_neutered: formData.spayedOrNeutered,
-            color: formData.color,
-            microchip: formData.microchip,
-            initials: formData.initials,
-            hospital_id: 1, // TODO: change to the hospital id to specify which hospital the client is from
-        };
+export type ClientSearchResult = {
+    id: string;
+    owner_name: string;
+    email: string | null;
+    cell_phone: string | null;
+};
 
-        const { error } = await supabase.rpc('create_pet', { payload });
-        if (error) throw error;
-        return 'Successfully submitted pet information! Thank you!';
-    } catch (error: any) {
-        console.error('Error submitting pet form:', error);
-        throw error;
-    }
+export const searchClients = async (
+    q: string
+): Promise<ClientSearchResult[]> => {
+    const trimmed = q.trim();
+    if (trimmed.length < 2) return [];
+    const pattern = `%${trimmed}%`;
+    const { data, error } = await supabase
+        .from('clients_v2')
+        .select('id, owner_name, email, cell_phone')
+        .or(
+            `owner_name.ilike.${pattern},email.ilike.${pattern},cell_phone.ilike.${pattern}`
+        )
+        .order('owner_name')
+        .limit(10);
+    if (error) throw error;
+    return data ?? [];
+};
+
+export const submitPetFormData = async (formData: any) => {
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    if (!session)
+        throw new Error('Device not provisioned. Please contact staff.');
+    if (!formData.clientId) throw new Error('No client selected.');
+
+    const p_pet = {
+        id: uuid(),
+        client_id: formData.clientId,
+        pet_name: formData.petName,
+        species: formData.selectSpecies,
+        breed: formData.breed,
+        birth_date: formData.birthDate,
+        sex: formData.sex,
+        spayed_or_neutered: formData.spayedOrNeutered,
+        color: formData.color,
+        microchip: formData.microchip,
+        initials: formData.initials,
+    };
+    const { data, error } = await supabase.rpc('create_pet_for_client', {
+        p_pet,
+    });
+    if (error) throw error;
+    return 'Successfully submitted pet information! Thank you!';
 };
 
 // types you can reuse in UI
@@ -78,34 +127,32 @@ function speciesToDbSpecies(uiSpecies: string): 'Canine' | 'Feline' | null {
 }
 
 export async function searchBreedsTop5(params: {
-    uiSpecies: string; // 'Dog' | 'Cat' | ...
+    uiSpecies: string;
     query: string;
 }): Promise<BreedSuggestion[]> {
     const dbSpecies = speciesToDbSpecies(params.uiSpecies);
-    const q = params.query.trim(); // trim the query to remove any leading or trailing whitespace
+    const q = params.query.trim();
 
     if (!dbSpecies) return [];
     if (q.length < 2) return [];
 
-    // 1) prefix-first
     const prefixPattern = `${q}%`;
 
     const { data: prefixRows, error: prefixErr } = await supabase
         .from('breeds')
         .select('name')
         .eq('species', dbSpecies)
-        .ilike('name', prefixPattern) // ilike is case-insensitive like
+        .ilike('name', prefixPattern)
         .order('name', { ascending: true })
         .limit(5);
 
     if (prefixErr) throw prefixErr;
 
-    const prefix = (prefixRows ?? []).map((r) => r.name);
+    const prefix = (prefixRows ?? []).map((r: any) => r.name);
     if (prefix.length >= 5) {
         return prefix.slice(0, 5).map((name) => ({ label: name, value: name }));
     }
 
-    // 2) fallback contains to fill remaining slots (optional but nice)
     const remaining = 5 - prefix.length;
     const containsPattern = `%${q}%`;
 
@@ -115,13 +162,12 @@ export async function searchBreedsTop5(params: {
         .eq('species', dbSpecies)
         .ilike('name', containsPattern)
         .order('name', { ascending: true })
-        .limit(10); // grab a few extra; we'll dedupe + take remaining
+        .limit(10);
 
     if (containsErr) throw containsErr;
 
-    const contains = (containsRows ?? []).map((r) => r.name);
+    const contains = (containsRows ?? []).map((r: any) => r.name);
 
-    // de-dupe while preserving order
     const out: string[] = [];
     const seen = new Set<string>();
     for (const name of [...prefix, ...contains]) {

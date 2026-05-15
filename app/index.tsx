@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Image,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -36,11 +37,13 @@ export default function Index() {
                 <LanguageToggle />
             </View>
 
-            <Image
-                source={require('./images/homepageImage.png')}
-                style={styles.image}
-                resizeMode="contain"
-            />
+            <TouchableWithoutFeedback onLongPress={() => router.push('/screens/AdminSetup')} delayLongPress={3000}>
+                <Image
+                    source={require('./images/homepageImage.png')}
+                    style={styles.image}
+                    resizeMode="contain"
+                />
+            </TouchableWithoutFeedback>
 
             <TouchableOpacity
                 style={[styles.button, styles.primaryButton]}

@@ -5,14 +5,25 @@
     "build": {
         "development": {
             "developmentClient": true,
-            "distribution": "internal"
+            "distribution": "internal",
+            "env": {
+                "APP_VARIANT": "staging",
+                "EXPO_PUBLIC_SUPABASE_URL": "https://acmgofotwucibmtwaeob.supabase.co"
+            }
         },
         "preview": {
-            "distribution": "internal"
+            "distribution": "internal",
+            "env": {
+                "APP_VARIANT": "staging",
+                "EXPO_PUBLIC_SUPABASE_URL": "https://acmgofotwucibmtwaeob.supabase.co"
+            }
         },
         "production": {
             "android": {
                 "buildType": "apk"
+            },
+            "env": {
+                "APP_VARIANT": "production"
             }
         }
     },

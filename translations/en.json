@@ -74,5 +74,10 @@
     "birthDateRequired": "Birth date is required",
     "sexRequired": "Sex is required",
     "submitError": "Error",
-    "submitErrorMessage": "Failed to submit data"
+    "submitErrorMessage": "Failed to submit data",
+    "searchClient": "Search Client",
+    "searchClientPrompt": "Type 2+ characters to search",
+    "noClientsFound": "No clients found",
+    "clientNotSelected": "Please select a client",
+    "changeClient": "Change"
 }

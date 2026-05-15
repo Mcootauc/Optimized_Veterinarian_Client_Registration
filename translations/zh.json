@@ -73,5 +73,10 @@
     "birthDateRequired": "出生日期为必填项",
     "sexRequired": "性别为必填项",
     "submitError": "错误",
-    "submitErrorMessage": "提交数据失败"
+    "submitErrorMessage": "提交数据失败",
+    "searchClient": "搜索客户",
+    "searchClientPrompt": "输入2个或更多字符进行搜索",
+    "noClientsFound": "未找到客户",
+    "clientNotSelected": "请选择一位客户",
+    "changeClient": "更改"
 }

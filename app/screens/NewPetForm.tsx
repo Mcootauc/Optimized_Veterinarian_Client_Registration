@@ -16,14 +16,11 @@ import {
 } from '@expo-google-fonts/inter';
 import {
     containsEmoji,
-    containsOnlyLettersAndSpaces,
     containsOnlyNumbers,
-    isValidPhone,
-    isValidEmail,
 } from '../ErrorCheck';
-import { submitPetFormData } from '../Services/SupabaseService';
+import { submitPetFormData, ClientSearchResult } from '../Services/SupabaseService';
 import 'react-native-get-random-values';
-import OwnerDetailsCard from '@/components/formCards/OwnerDetailsCard';
+import ClientSearchField from '@/components/formComponents/ClientSearchField';
 import PetDetailsCard from '@/components/formCards/PetDetailsCard';
 import StatusCard from '@/components/formCards/StatusCard';
 import Terms from '@/components/formCards/Terms';
@@ -33,10 +30,9 @@ import { useLanguage } from '../../contexts/LanguageContext';
 export default function NewPetForm() {
     const { t } = useLanguage();
     // Form fields
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [cellPhone, setCellPhone] = useState('');
-    const [email, setEmail] = useState('');
+    const [selectedClient, setSelectedClient] = useState<ClientSearchResult | null>(null);
+    const [clientError, setClientError] = useState('');
+    
     const [petName, setPetName] = useState('');
     const [breed, setBreed] = useState('');
     const [color, setColor] = useState('');
@@ -51,12 +47,6 @@ export default function NewPetForm() {
     const { width } = useWindowDimensions(); // Get the width of the screen for the transition animation
 
     // Add error states for page 1
-    const [firstNameError, setFirstNameError] = useState('');
-    const [lastNameError, setLastNameError] = useState('');
-
-    // Page 2 errors
-    const [phoneError, setPhoneError] = useState('');
-    const [emailError, setEmailError] = useState('');
     const [petNameError, setPetNameError] = useState('');
     // Page 3 errors
     const [speciesError, setSpeciesError] = useState('');
@@ -82,10 +72,7 @@ export default function NewPetForm() {
         let isValid = true;
 
         // Reset all error states
-        setFirstNameError('');
-        setLastNameError('');
-        setEmailError('');
-        setPhoneError('');
+        setClientError('');
         // Reset pet details error states too
         setPetNameError('');
         setColorError('');
@@ -94,48 +81,9 @@ export default function NewPetForm() {
         setBirthDateError('');
         setSexError('');
 
-        // First Name validation
-        if (!firstName.trim()) {
-            // If the first name is empty, set the error message
-            setFirstNameError(t('firstNameRequired'));
-            isValid = false;
-        } else if (containsEmoji(firstName)) {
-            // If the first name contains an emoji, set the error message
-            setFirstNameError(t('firstNameNoEmojis'));
-            isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(firstName)) {
-            // If the first name contains only letters and spaces, set the error message
-            setFirstNameError(t('firstNameLettersOnly'));
-            isValid = false;
-        }
-
-        // Last Name validation
-        if (!lastName.trim()) {
-            setLastNameError(t('lastNameRequired'));
-            isValid = false;
-        } else if (containsEmoji(lastName)) {
-            setLastNameError(t('lastNameNoEmojis'));
-            isValid = false;
-        } else if (!containsOnlyLettersAndSpaces(lastName)) {
-            setLastNameError(t('lastNameLettersOnly'));
-            isValid = false;
-        }
-
-        // Email validation
-        if (!email.trim()) {
-            setEmailError(t('emailRequired'));
-            isValid = false;
-        } else if (!isValidEmail(email)) {
-            setEmailError(t('emailInvalid'));
-            isValid = false;
-        }
-
-        // Phone validation
-        if (!cellPhone.trim()) {
-            setPhoneError(t('phoneRequired'));
-            isValid = false;
-        } else if (!isValidPhone(cellPhone)) {
-            setPhoneError(t('phoneInvalid'));
+        // Client validation
+        if (!selectedClient) {
+            setClientError(t('clientNotSelected') || 'Please select a client');
             isValid = false;
         }
 
@@ -302,17 +250,13 @@ export default function NewPetForm() {
             timeZone: 'America/Los_Angeles',
         });
 
-        const ownerName = `${firstName} ${lastName}`;
-
         const formData = {
             timestamp,
-            ownerName,
-            cellPhone,
-            email,
+            clientId: selectedClient?.id,
             petName,
             selectSpecies,
             breed,
-            birthDate: birthDate?.toISOString(), // Send ISO string to Supabase
+            birthDate: birthDate ? birthDate.toISOString().slice(0, 10) : null,
             sex,
             spayedOrNeutered,
             color,
@@ -325,10 +269,7 @@ export default function NewPetForm() {
             Alert.alert('Success', responseMessage);
 
             // Reset form fields
-            setFirstName('');
-            setLastName('');
-            setCellPhone('');
-            setEmail('');
+            setSelectedClient(null);
             setPetName('');
             setSelectSpecies('');
             setBreed('');
@@ -359,13 +300,6 @@ export default function NewPetForm() {
         return null;
     }
 
-    const ownerDetailsCardHasError = !!(
-        firstNameError ||
-        lastNameError ||
-        emailError ||
-        phoneError
-    );
-
     const petDetailsCardHasError = !!(
         petNameError ||
         colorError ||
@@ -378,9 +312,6 @@ export default function NewPetForm() {
     const statusCardHasError = !!(spayedNeuteredError || microchipError);
 
     const termsCardHasError = !!initialsError;
-
-    // const page2Error = petNameError || speciesError || breedError || birthDateError;
-    // const page3Error = colorError || sexError || spayedNeuteredError || microchipError;
 
     // Render navigation buttons:
     // "Back" always on the left (if not on first page)
@@ -401,25 +332,11 @@ export default function NewPetForm() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View style={{ marginTop: 40, gap: 30 }}>
-                            <OwnerDetailsCard
-                                showAddress={false}
-                                firstName={firstName}
-                                setFirstName={setFirstName}
-                                firstNameError={firstNameError}
-                                setFirstNameError={setFirstNameError}
-                                lastName={lastName}
-                                setLastName={setLastName}
-                                lastNameError={lastNameError}
-                                setLastNameError={setLastNameError}
-                                email={email}
-                                setEmail={setEmail}
-                                emailError={emailError}
-                                setEmailError={setEmailError}
-                                cellPhone={cellPhone}
-                                setCellPhone={setCellPhone}
-                                phoneError={phoneError}
-                                setPhoneError={setPhoneError}
-                                hasError={ownerDetailsCardHasError}
+                            <ClientSearchField
+                                selectedClient={selectedClient}
+                                setSelectedClient={setSelectedClient}
+                                clientError={clientError}
+                                setClientError={setClientError}
                                 width={width}
                                 dividerColor={Colors.steelBlue}
                             />

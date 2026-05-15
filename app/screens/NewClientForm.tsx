@@ -376,13 +376,13 @@ export default function NewClientForm() {
             petName,
             selectSpecies,
             breed,
-            birthDate: birthDate?.toISOString(), // Send ISO string to Supabase
+            birthDate: birthDate ? birthDate.toISOString().slice(0, 10) : null,
             sex,
             secondaryContactName,
             contactCellPhone,
             spayedOrNeutered,
             color,
-            microchip: microchipStatus,
+            microchip: microchipStatus === 'Yes' ? microchip : microchipStatus,
             initials,
         };
 

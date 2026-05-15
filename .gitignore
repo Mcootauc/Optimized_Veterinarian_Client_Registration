@@ -48,6 +48,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
@@ -56,4 +57,7 @@ yarn-error.*
 
 .expo/devices.json
 expo-env.d.ts
+.expo
 .expo/
+
+android/

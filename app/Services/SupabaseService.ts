@@ -78,7 +78,7 @@ export const searchClients = async (
     if (trimmed.length < 2) return [];
     const pattern = `%${trimmed}%`;
     const { data, error } = await supabase
-        .from('clients_v2')
+        .from('clients')
         .select('id, owner_name, email, cell_phone')
         .or(
             `owner_name.ilike.${pattern},email.ilike.${pattern},cell_phone.ilike.${pattern}`

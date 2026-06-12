@@ -4,7 +4,8 @@ const IS_STAGING = APP_VARIANT === 'staging';
 export default {
     expo: {
         name: IS_STAGING ? 'OVIForm (Staging)' : 'OVIForm',
-        slug: 'ValleyVetKiosk',
+        slug: 'OVIForm',
+        owner: 'mcootaucs-team',
         version: '1.0.0',
         orientation: 'portrait',
         icon: './assets/images/icon.png',
@@ -17,14 +18,18 @@ export default {
         },
         ios: {
             supportsTablet: true,
-            bundleIdentifier: IS_STAGING ? 'com.mitchxcool.ValleyVetKiosk.staging' : 'com.mitchxcool.ValleyVetKiosk',
+            bundleIdentifier: IS_STAGING
+                ? 'com.mcootauc.OVIForm.staging'
+                : 'com.mcootauc.OVIForm',
         },
         android: {
             adaptiveIcon: {
                 foregroundImage: './assets/images/adaptive-icon.png',
                 backgroundColor: '#ffffff',
             },
-            package: IS_STAGING ? 'com.mitchxcool.ValleyVetKiosk.staging' : 'com.mitchxcool.ValleyVetKiosk',
+            package: IS_STAGING
+                ? 'com.mcootauc.OVIForm.staging'
+                : 'com.mcootauc.OVIForm',
             permissions: ['ACCESS_FINE_LOCATION'],
         },
         web: {
@@ -41,10 +46,11 @@ export default {
                 origin: false,
             },
             extra: {
-                googlePlacesApiKey: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                googlePlacesApiKey:
+                    process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
             },
             eas: {
-                projectId: '58810248-3b21-4e46-b000-cd0ef968c56e',
+                projectId: 'fe62e7e4-9d35-4d3e-a297-ddf826f224ac',
             },
         },
     },

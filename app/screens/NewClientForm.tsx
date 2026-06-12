@@ -171,6 +171,9 @@ export default function NewClientForm() {
         } else if (!isValidAddress(homeAddress)) {
             setAddressError(t('addressInvalid'));
             isValid = false;
+        } else if (!zipCode.trim()) {
+            setAddressError('Please select a specific address that includes a zip code.');
+            isValid = false;
         }
 
         // Pet Details Validation

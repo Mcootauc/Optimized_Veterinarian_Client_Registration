@@ -44,7 +44,7 @@ EXPO_PUBLIC_GOOGLE_PLACES_API_KEY=
 EXPO_PUBLIC_APP_VARIANT=
 ```
 
-The app uses `APP_VARIANT` branching in `app.config.js`. Staging builds resolve to staging url/keys and `com.mitchxcool.ValleyVetKiosk.staging` bundle ID, while production defaults to the prod bundle ID.
+The app uses `APP_VARIANT` branching in `app.config.js`. Staging builds resolve to staging url/keys and `com.mcootauc.OVIForm.staging` bundle ID, while production defaults to `com.mcootauc.OVIForm`.
 
 ## Architecture
 
@@ -73,9 +73,9 @@ Each card is a self-contained section passed all its state and error setters as 
 
 | Card | Purpose |
 |---|---|
-| `OwnerDetailsCard` | Name, address (Google Places), phone, email |
+| `OwnerDetailsCard` | Name, address (Google Places), phone, email. Address section is optional — pass `showAddress={false}` to hide it (used in `NewPetForm`) |
 | `PetDetailsCard` | Pet name, species, breed (autocomplete), DOB, sex, color |
-| `SecondaryContact` | Optional emergency contact name + phone |
+| `SecondaryContact` | Optional emergency contact name + phone. Fields are only validated when non-empty (partial entry is still validated) |
 | `StatusCard` | Spayed/neutered status, microchip status |
 | `Terms` | Terms text + initials field for agreement |
 
@@ -84,7 +84,7 @@ Each card is a self-contained section passed all its state and error setters as 
 - `InputField` — standard labeled text input with error display
 - `SelectField` — button-group selector (Yes/No/Unknown)
 - `DateField` — date picker wrapper
-- `AddressInput` — Google Places Autocomplete wrapper
+- `AddressInput` — standalone Google Places Autocomplete wrapper with an `onSelect(result: { full, street, city, state, zip })` callback. Used as a reusable alternative to the inline address logic in `OwnerDetailsCard`
 - `BreedAutocompleteField` — calls `searchBreedsTop5` in SupabaseService; queries `breeds` table
 - `AssistanceText` — localized help prompt shown on page 1
 

@@ -102,8 +102,8 @@ const OwnerDetailsCard = ({
         const marginBottom = isAddressFocused
             ? 190
             : addressError
-            ? 25 // Additional space for error text (25px base + ~30px for error text)
-            : 15;
+              ? 25 // Additional space for error text (25px base + ~30px for error text)
+              : 15;
 
         return StyleSheet.flatten([styles.addressWrapBase, { marginBottom }]);
     }, [isAddressFocused, addressError]);

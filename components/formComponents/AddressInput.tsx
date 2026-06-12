@@ -106,10 +106,14 @@ const AddressInput: React.FC<AddressInputProps> = ({
                         fontSize: 16,
                     },
                 }}
-                query={{
-                    key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
-                    language: 'en',
-                }}
+                            renderDescription={(row) => {
+                                return row.description;
+                            }}
+                            query={{
+                                key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+                                language: 'en',
+                                components: 'country:us',
+                            }}
                 onPress={(data, details = null) => {
                     const components = details?.address_components;
                     const getComponent = (type: string) =>

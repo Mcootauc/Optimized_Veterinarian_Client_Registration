@@ -294,6 +294,50 @@ export type Database = {
                     },
                 ];
             };
+            waitlist: {
+                Row: {
+                    client_name: string;
+                    created_at: string;
+                    hospital_id: string;
+                    id: string;
+                    needs_info_update: boolean;
+                    pet_name: string;
+                    phone_number: string;
+                    resolved_at: string | null;
+                    visit_reason: string;
+                };
+                Insert: {
+                    client_name: string;
+                    created_at?: string;
+                    hospital_id: string;
+                    id?: string;
+                    needs_info_update?: boolean;
+                    pet_name: string;
+                    phone_number: string;
+                    resolved_at?: string | null;
+                    visit_reason: string;
+                };
+                Update: {
+                    client_name?: string;
+                    created_at?: string;
+                    hospital_id?: string;
+                    id?: string;
+                    needs_info_update?: boolean;
+                    pet_name?: string;
+                    phone_number?: string;
+                    resolved_at?: string | null;
+                    visit_reason?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'waitlist_hospital_id_fkey';
+                        columns: ['hospital_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'hospitals';
+                        referencedColumns: ['id'];
+                    },
+                ];
+            };
         };
         Views: {
             [_ in never]: never;

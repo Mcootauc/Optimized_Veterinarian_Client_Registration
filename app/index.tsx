@@ -54,11 +54,18 @@ export default function Index() {
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={[styles.button, styles.secondaryButton]}
                 onPress={() => router.push('/screens/NewPetForm')}
             >
                 <Text style={styles.buttonText}>{t('newPetRegistration')}</Text>
+            </TouchableOpacity> */}
+
+            <TouchableOpacity
+                style={[styles.button, styles.secondaryButton]}
+                onPress={() => router.push('/screens/Waitlist')}
+            >
+                <Text style={styles.buttonText}>{t('waitListRegistration')}</Text>
             </TouchableOpacity>
 
             <Text style={styles.footer}>{t('copyright')}</Text>
@@ -98,6 +105,9 @@ const styles = StyleSheet.create({
     },
     secondaryButton: {
         backgroundColor: Colors.steelBlue,
+    },
+    tertiaryButton: {
+        backgroundColor: Colors.green || '#2e8b57', // fallback color if green doesn't exist
     },
     buttonText: {
         fontFamily: 'Inter_600SemiBold',

@@ -88,6 +88,24 @@ export default function RootLayout() {
                             ),
                         }}
                     />
+                    {/* Wait List form */}
+                    <Stack.Screen
+                        name="screens/Waitlist"
+                        options={{
+                            headerStyle: { backgroundColor: Colors.steelBlue },
+                            headerTintColor: Colors.white,
+                            headerTitle: () => (
+                                <TranslatedHeader
+                                    titleKey="waitListRegistration"
+                                    style={{
+                                        fontFamily: 'Inter_700Bold',
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                    }}
+                                />
+                            ),
+                        }}
+                    />
                     {/* Admin setup (hidden) */}
                     <Stack.Screen
                         name="screens/AdminSetup"

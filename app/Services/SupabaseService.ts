@@ -117,6 +117,28 @@ export const submitPetFormData = async (formData: any) => {
     return 'Successfully submitted pet information! Thank you!';
 };
 
+export const submitWaitlistFormData = async (formData: any) => {
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    if (!session)
+        throw new Error('Device not provisioned. Please contact staff.');
+
+    const p_entry = {
+        id: uuid(),
+        client_name: formData.ownerName,
+        pet_name: formData.petName,
+        phone_number: formData.phone,
+        visit_reason: formData.reasonForVisit,
+        needs_info_update: !!formData.petInfoUpdate,
+    };
+    
+    const { error } = await supabase.rpc('create_waitlist_entry', { p_entry });
+    if (error) throw error;
+    
+    return 'Successfully added to the wait list! Thank you!';
+};
+
 // types you can reuse in UI
 export type BreedSuggestion = { label: string; value: string };
 

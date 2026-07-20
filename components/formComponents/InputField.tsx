@@ -18,6 +18,8 @@ interface InputFieldProps {
     error?: string;
     secureTextEntry?: boolean;
     keyboardType?: TextInputProps['keyboardType'];
+    multiline?: boolean;
+    numberOfLines?: number;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -28,16 +30,25 @@ const InputField: React.FC<InputFieldProps> = ({
     error,
     secureTextEntry = false,
     keyboardType = 'default',
+    multiline = false,
+    numberOfLines,
 }) => {
     return (
         <View style={[styles.container, style]}>
             <TextInput
-                style={[styles.input, error ? styles.inputError : null]}
+                style={[
+                    styles.input, 
+                    error ? styles.inputError : null,
+                    multiline && styles.multilineInput
+                ]}
                 placeholder={placeholder}
                 value={value}
                 onChangeText={onChangeText}
                 secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
+                multiline={multiline}
+                numberOfLines={numberOfLines}
+                textAlignVertical={multiline ? 'top' : 'auto'}
             />
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
@@ -62,6 +73,10 @@ const styles = StyleSheet.create({
     inputError: {
         borderColor: Colors.red,
         borderWidth: 1,
+    },
+    multilineInput: {
+        height: 100,
+        paddingTop: 10,
     },
     errorText: {
         color: Colors.red,

@@ -16,7 +16,6 @@ import {
 } from '@expo-google-fonts/inter';
 import {
     containsEmoji,
-    containsOnlyNumbers,
 } from '../ErrorCheck';
 import { submitPetFormData, ClientSearchResult } from '../Services/SupabaseService';
 import 'react-native-get-random-values';
@@ -38,7 +37,6 @@ export default function NewPetForm() {
     const [color, setColor] = useState('');
     const [sex, setSex] = useState('');
     const [spayedOrNeutered, setSpayedOrNeutered] = useState('');
-    const [microchip, setMicrochip] = useState('');
     const [initials, setInitials] = useState('');
 
     // Navigation state for multi-page form (pages: 0 to 3)
@@ -149,26 +147,6 @@ export default function NewPetForm() {
         if (!microchipStatus) {
             setMicrochipError('Please select yes, no, or unknown');
             isValid = false;
-        } else if (microchipStatus === 'Yes') {
-            // If user selected "Yes", they must provide a valid microchip number
-            if (microchip.length === 0) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            } else if (!containsOnlyNumbers(microchip)) {
-                setMicrochipError('Microchip number can only contain numbers');
-                isValid = false;
-            } else if (
-                microchip.length !== 9 &&
-                microchip.length !== 10 &&
-                microchip.length !== 15
-            ) {
-                setMicrochipError(
-                    'Typical microchip numbers are 9, 10, or 15 characters long.'
-                );
-                isValid = false;
-            }
         }
 
         // Initials validation
@@ -260,7 +238,7 @@ export default function NewPetForm() {
             sex,
             spayedOrNeutered,
             color,
-            microchip: microchipStatus === 'Yes' ? microchip : microchipStatus,
+            microchip: microchipStatus,
             initials,
         };
 
@@ -277,7 +255,6 @@ export default function NewPetForm() {
             setSex('');
             setSpayedOrNeutered('');
             setColor('');
-            setMicrochip('');
             setMicrochipStatus('');
             setInitials('');
 
@@ -397,8 +374,6 @@ export default function NewPetForm() {
                                 setSpayedOrNeutered={setSpayedOrNeutered}
                                 microchipStatus={microchipStatus}
                                 setMicrochipStatus={setMicrochipStatus}
-                                microchip={microchip}
-                                setMicrochip={setMicrochip}
                                 spayedNeuteredError={spayedNeuteredError}
                                 microchipError={microchipError}
                                 hasError={statusCardHasError}

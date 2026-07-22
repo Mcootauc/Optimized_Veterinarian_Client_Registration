@@ -10,8 +10,6 @@ interface StatusCardProps {
     setSpayedOrNeutered: (val: string) => void;
     microchipStatus: string;
     setMicrochipStatus: (val: string) => void;
-    microchip: string;
-    setMicrochip: (val: string) => void;
     spayedNeuteredError?: string;
     microchipError?: string;
     hasError: boolean;
@@ -24,8 +22,6 @@ const StatusCard = ({
     setSpayedOrNeutered,
     microchipStatus,
     setMicrochipStatus,
-    microchip,
-    setMicrochip,
     spayedNeuteredError,
     microchipError,
     hasError,

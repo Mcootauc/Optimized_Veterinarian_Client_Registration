@@ -50,7 +50,6 @@ export default function NewClientForm() {
     const [color, setColor] = useState('');
     const [sex, setSex] = useState('');
     const [spayedOrNeutered, setSpayedOrNeutered] = useState('');
-    const [microchip, setMicrochip] = useState('');
     const [initials, setInitials] = useState('');
 
     // Secondary contact fields
@@ -385,7 +384,7 @@ export default function NewClientForm() {
             contactCellPhone,
             spayedOrNeutered,
             color,
-            microchip: microchipStatus === 'Yes' ? microchip : microchipStatus,
+            microchip: microchipStatus,
             initials,
         };
 
@@ -413,7 +412,6 @@ export default function NewClientForm() {
             setContactCellPhone('');
             setSpayedOrNeutered('');
             setColor('');
-            setMicrochip('');
             setMicrochipStatus('');
             setInitials('');
 
@@ -596,8 +594,6 @@ export default function NewClientForm() {
                                 setSpayedOrNeutered={setSpayedOrNeutered}
                                 microchipStatus={microchipStatus}
                                 setMicrochipStatus={setMicrochipStatus}
-                                microchip={microchip}
-                                setMicrochip={setMicrochip}
                                 spayedNeuteredError={spayedNeuteredError}
                                 microchipError={microchipError}
                                 hasError={statusCardHasError}
